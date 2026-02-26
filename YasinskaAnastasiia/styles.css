@@ -1,0 +1,201 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 50px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.game {
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  max-width: 500px;
+  width: 100%;
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin: 0 0 20px 0;
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.counter, .timer {
+  background: linear-gradient(145deg, #000, #333);
+  color: #ff2a2a;
+  padding: 12px 16px;
+  font-weight: 800;
+  width: 100px;
+  text-align: center;
+  border-radius: 8px;
+  letter-spacing: 1px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.start-btn {
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(145deg, #4CAF50, #45a049);
+  color: white;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.start-btn:hover {
+  background: linear-gradient(145deg, #45a049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.start-btn:active {
+  transform: translateY(0);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  gap: 3px;
+  padding: 15px;
+  background: #b5b5b5;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 3px #9a9a9a, 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Базова клітинка (закрита) */
+.cell {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(145deg, #bdbdbd, #a8a8a8);
+  border: 2px solid #7c7c7c;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.cell:hover {
+  background: linear-gradient(145deg, #c8c8c8, #bdbdbd);
+  transform: scale(1.05);
+}
+
+/* Ефект натиску */
+.cell:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Відкрита клітинка */
+.cell.open {
+  background: linear-gradient(145deg, #e3e3e3, #d0d0d0);
+  border: 2px solid #a8a8a8;
+  cursor: default;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Номери в відкритих клітинках */
+.cell.open.one::after { content: "1"; color: #0000ff; }
+.cell.open.two::after { content: "2"; color: #008000; }
+.cell.open.three::after { content: "3"; color: #ff0000; }
+.cell.open.four::after { content: "4"; color: #000080; }
+.cell.open.five::after { content: "5"; color: #800000; }
+.cell.open.six::after { content: "6"; color: #008080; }
+.cell.open.seven::after { content: "7"; color: #000000; }
+.cell.open.eight::after { content: "8"; color: #808080; }
+
+.cell.open::after {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Прапорець */
+.cell.flag {
+  background: #ffe27a;
+  position: relative;
+}
+.cell.flag::after{
+  content: "🚩";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+
+/* Міна */
+.cell.mine {
+  background: #ff6b6b;
+  position: relative;
+}
+.cell.mine::after{
+  content: "💣";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+
+/* Міна, на яку натиснули (вибух) */
+.cell.mine.hit {
+  background: #ff2f2f;
+  outline: 3px solid #000;
+}
+
+/* Прапорець на міні (правильний) */
+.cell.flag.correct {
+  box-shadow: inset 0 0 0 3px #21a846;
+}
+
+/* Прапорець НЕ на міні (помилковий) */
+.cell.flag.wrong {
+  box-shadow: inset 0 0 0 3px #d11b1b;
+}
+
+/* Адаптивність: якщо екран маленький — зменшуємо клітинки */
+@media (max-width: 520px) {
+  .board {
+    grid-template-columns: repeat(10, 30px);
+  }
+  .cell {
+    width: 30px;
+    height: 30px;
+  }
+  .cell.flag::after,
+  .cell.mine::after {
+    font-size: 16px;
+  }
+  .counter, .timer {
+    width: 78px;
+  }
+}
