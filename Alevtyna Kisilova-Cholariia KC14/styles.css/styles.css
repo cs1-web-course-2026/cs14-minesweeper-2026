@@ -7,7 +7,7 @@
   --muted-ink: #2c2f3a;
 }
 
-/* базовые */
+
 *{box-sizing:border-box}
 html,body{height:100%}
 
@@ -181,4 +181,5 @@ body{
   .timer, .flags{ padding:6px 8px }
   .btn-start{ padding:8px 10px }
 }
+
 
