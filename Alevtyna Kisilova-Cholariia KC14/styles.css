@@ -7,7 +7,7 @@
 }
 
 *{box-sizing:border-box}
-html,body{height:100%}
+html,body{min-height:100vh;}
 
 body{
   margin:0;
@@ -187,4 +187,5 @@ body{
   .game{ padding:12px }
   .timer, .flags{ padding:6px 8px }
   .btn-start{ padding:8px 10px }
+
 }
