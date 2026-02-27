@@ -9,10 +9,13 @@
 *{box-sizing:border-box}
 html,body{min-height:100vh;}
 
+
 body{
   margin:0;
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
   background: linear-gradient(135deg, #ffe6f1 0%, #f3e8ff 35%, #e6fff5 70%, #f0fff9 100%);
+  background-attachment: fixed;
+  bacground-repeat: no repeat;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -189,3 +192,4 @@ body{
   .btn-start{ padding:8px 10px }
 
 }
+
