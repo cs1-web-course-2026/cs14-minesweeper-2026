@@ -265,6 +265,7 @@ body {
 
 .cell--flag {
   position: relative;
+  border-color: rgba(248, 113, 113, 0.9);
 }
 
 .cell--flag::after {
@@ -272,10 +273,6 @@ body {
   position: absolute;
   font-size: 1.05em;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.7));
-}
-
-.cell--flag {
-  border-color: rgba(248, 113, 113, 0.9);
 }
 
 .cell--flag-correct {
