@@ -85,7 +85,7 @@ body {
 
 /* --- СТИЛІ КЛІТИНКИ ТА ЇЇ СТАНІВ --- */
 
- .cell {
+.cell {
     /* Початковий стан: закрита клітинка (випукла) */
     border: 3px solid;
     border-color: #ffffff #808080 #808080 #ffffff;
@@ -96,7 +96,7 @@ body {
  }
 
  /* Відкрита клітинка: стає плоскою */
- .cell.open {
+.cell.open {
     border: 1px solid #7b7b7b;
     font-size: 16px;
  }
@@ -113,8 +113,8 @@ body {
 }
 
 /* Кольорова стилізація цифр (класичний Minesweeper) */
-.cell.val-1 { color: blue; }
-.cell.val-2 { color: green; }
-.cell.val-3 { color: red; }
-.cell.val-4 { color: darkblue; }
-.cell.val-5 { color: darkred; }
+.cell.mine-count-1 { color: blue; }
+.cell.mine-count-2 { color: green; }
+.cell.mine-count-3 { color: red; }
+.cell.mine-count-4 { color: darkblue; }
+.cell.mine-count-5 { color: darkred; }
