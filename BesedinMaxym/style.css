@@ -259,24 +259,14 @@ body {
 .cell.num-7 { color: var(--num-7); }
 .cell.num-8 { color: var(--num-8); }
 
-/* ---------- 3. FLAGGED (no mine) ---------- */
-.cell.flagged {
-  background: var(--closed-bg);
-  border: 1px solid var(--closed-border);
-}
-
-.cell.flagged::after {
-  content: '\1F6A9';
-  font-size: 16px;
-  filter: drop-shadow(0 0 4px rgba(255,71,87,.5));
-}
-
-/* ---------- 4. FLAGGED on mine ---------- */
+/* ---------- 3. FLAGGED (no mine) & 4. FLAGGED on mine ---------- */
+.cell.flagged,
 .cell.flagged-mine {
   background: var(--closed-bg);
   border: 1px solid var(--closed-border);
 }
 
+.cell.flagged::after,
 .cell.flagged-mine::after {
   content: '\1F6A9';
   font-size: 16px;
