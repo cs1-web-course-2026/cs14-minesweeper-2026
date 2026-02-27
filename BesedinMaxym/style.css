@@ -1,0 +1,365 @@
+/* ========================================================
+   MINESWEEPER — DARK THEME
+   ======================================================== */
+
+/* ---------- CSS Variables ---------- */
+:root {
+  /* Background & surfaces */
+  --bg:              #0d0d0d;
+  --surface-1:       #161616;
+  --surface-2:       #1e1e1e;
+  --surface-3:       #282828;
+  --border-subtle:   #333;
+  --border-strong:   #444;
+
+  /* Cell sizing */
+  --cell-size:       38px;
+  --gap:             2px;
+  --radius:          6px;
+
+  /* Closed cell */
+  --closed-bg:       #2a2a2e;
+  --closed-hover:    #353539;
+  --closed-active:   #1f1f22;
+  --closed-border:   #3e3e44;
+
+  /* Opened cell */
+  --opened-bg:       #141417;
+  --opened-border:   #222228;
+
+  /* Numbers — vibrant on dark */
+  --num-1: #5b9dff;
+  --num-2: #50d890;
+  --num-3: #ff6b6b;
+  --num-4: #a78bfa;
+  --num-5: #f59e42;
+  --num-6: #38d9d9;
+  --num-7: #e0e0e0;
+  --num-8: #888;
+
+  /* Flag */
+  --flag-red:        #ff4757;
+  --flag-pole:       #aaa;
+
+  /* Mine */
+  --mine-color:      #e0e0e0;
+  --mine-hit-bg:     #c02030;
+
+  /* Counters */
+  --digit-bg:        #0a0a0a;
+  --digit-color:     #00e676;
+  --digit-glow:      rgba(0, 230, 118, .45);
+
+  /* Accent */
+  --accent:          #00e676;
+  --accent-dim:      rgba(0, 230, 118, .12);
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---------- Body ---------- */
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #e0e0e0;
+}
+
+/* ---------- Game Container ---------- */
+.game-container {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04),
+    0 8px 40px rgba(0,0,0,.6);
+}
+
+/* ---------- Title ---------- */
+.game-title {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  letter-spacing: 6px;
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--digit-glow);
+  margin-bottom: 16px;
+  user-select: none;
+}
+
+/* ===========================================
+   HEADER — flags / start / timer
+   =========================================== */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+
+/* — Counter wrapper — */
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--digit-bg);
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.counter-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+  opacity: .7;
+}
+
+.counter-digits {
+  display: flex;
+  gap: 2px;
+}
+
+.digit {
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--digit-color);
+  text-shadow: 0 0 8px var(--digit-glow);
+  line-height: 1;
+}
+
+/* — Start button — */
+.btn-start {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  background: var(--surface-3);
+  border: 2px solid var(--border-strong);
+  border-radius: 50%;
+  cursor: pointer;
+  outline: none;
+  transition: background .15s, transform .1s, box-shadow .15s;
+  user-select: none;
+}
+
+.btn-start:hover {
+  background: #333;
+  box-shadow: 0 0 12px var(--accent-dim);
+  border-color: var(--accent);
+}
+
+.btn-start:active {
+  transform: scale(.92);
+  background: #222;
+}
+
+.btn-start .face {
+  pointer-events: none;
+}
+
+/* ===========================================
+   FIELD
+   =========================================== */
+.field {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 6px;
+  display: inline-block;
+}
+
+.row {
+  display: flex;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+/* ===========================================
+   CELL — base
+   =========================================== */
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  user-select: none;
+  cursor: default;
+  position: relative;
+  border-radius: var(--radius);
+  transition: background .12s, transform .1s;
+  line-height: 1;
+}
+
+/* ---------- 1. CLOSED ---------- */
+.cell.closed {
+  background: var(--closed-bg);
+  border: 1px solid var(--closed-border);
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.cell.closed:hover {
+  background: var(--closed-hover);
+  border-color: var(--accent);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 0 8px var(--accent-dim);
+}
+
+.cell.closed:active {
+  background: var(--closed-active);
+  transform: scale(.94);
+  border-color: var(--border-subtle);
+  box-shadow: none;
+}
+
+/* ---------- 2. OPENED ---------- */
+.cell.opened {
+  background: var(--opened-bg);
+  border: 1px solid var(--opened-border);
+}
+
+/* — Number colours — */
+.cell.num-1 { color: var(--num-1); text-shadow: 0 0 6px rgba(91,157,255,.4); }
+.cell.num-2 { color: var(--num-2); text-shadow: 0 0 6px rgba(80,216,144,.4); }
+.cell.num-3 { color: var(--num-3); text-shadow: 0 0 6px rgba(255,107,107,.4); }
+.cell.num-4 { color: var(--num-4); text-shadow: 0 0 6px rgba(167,139,250,.4); }
+.cell.num-5 { color: var(--num-5); text-shadow: 0 0 6px rgba(245,158,66,.4); }
+.cell.num-6 { color: var(--num-6); text-shadow: 0 0 6px rgba(56,217,217,.4); }
+.cell.num-7 { color: var(--num-7); }
+.cell.num-8 { color: var(--num-8); }
+
+/* ---------- 3. FLAGGED (no mine) & 4. FLAGGED on mine ---------- */
+.cell.flagged,
+.cell.flagged-mine {
+  background: var(--closed-bg);
+  border: 1px solid var(--closed-border);
+}
+
+.cell.flagged::after,
+.cell.flagged-mine::after {
+  content: '\1F6A9';
+  font-size: 16px;
+  filter: drop-shadow(0 0 4px rgba(255,71,87,.5));
+}
+
+/* ---------- 5. MINE (revealed, not hit) ---------- */
+.cell.mine {
+  background: var(--opened-bg);
+  border: 1px solid var(--opened-border);
+}
+
+.cell.mine::after {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 18px;
+  background:
+    /* core */
+    radial-gradient(circle at 40% 40%, #666, #222 70%) no-repeat center / 10px 10px,
+    /* spikes vertical */
+    linear-gradient(var(--mine-color), var(--mine-color)) no-repeat 8px 0 / 2px 18px,
+    /* spikes horizontal */
+    linear-gradient(var(--mine-color), var(--mine-color)) no-repeat 0 8px / 18px 2px,
+    /* diag TL */
+    linear-gradient(var(--mine-color), var(--mine-color)) no-repeat 2px 2px / 2px 2px,
+    /* diag TR */
+    linear-gradient(var(--mine-color), var(--mine-color)) no-repeat 14px 2px / 2px 2px,
+    /* diag BL */
+    linear-gradient(var(--mine-color), var(--mine-color)) no-repeat 2px 14px / 2px 2px,
+    /* diag BR */
+    linear-gradient(var(--mine-color), var(--mine-color)) no-repeat 14px 14px / 2px 2px;
+}
+
+/* ---------- 6. MINE-HIT (the one user clicked) ---------- */
+.cell.mine-hit {
+  background: var(--mine-hit-bg);
+  border: 1px solid #a01020;
+  box-shadow: 0 0 14px rgba(192, 32, 48, .5);
+}
+
+.cell.mine-hit::after {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 18px;
+  background:
+    radial-gradient(circle at 40% 40%, #888, #333 70%) no-repeat center / 10px 10px,
+    linear-gradient(#fff, #fff) no-repeat 8px 0 / 2px 18px,
+    linear-gradient(#fff, #fff) no-repeat 0 8px / 18px 2px,
+    linear-gradient(#fff, #fff) no-repeat 2px 2px / 2px 2px,
+    linear-gradient(#fff, #fff) no-repeat 14px 2px / 2px 2px,
+    linear-gradient(#fff, #fff) no-repeat 2px 14px / 2px 2px,
+    linear-gradient(#fff, #fff) no-repeat 14px 14px / 2px 2px;
+}
+
+/* ===========================================
+   LEGEND
+   =========================================== */
+.legend {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: #999;
+  font-size: 11px;
+}
+
+.legend h3 {
+  font-size: 11px;
+  margin-bottom: 10px;
+  color: #ccc;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.legend ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Swatch in legend reuses .cell styles */
+.legend .swatch {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}

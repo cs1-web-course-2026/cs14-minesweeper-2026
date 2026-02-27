@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minesweeper — Gothic</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-container">
+    <!-- Decorative corner ornaments -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <h1 class="game-title">☠ Minesweeper ☠</h1>
+    <p class="game-subtitle">— Memento Mori —</p>
+
+    <!-- ===== HEADER ===== -->
+    <div class="game-header">
+      <!-- Flag counter -->
+      <div class="counter flag-counter" title="Прапорці">
+        <span class="counter-icon">⚑</span>
+        <div class="counter-digits">
+          <span class="digit" id="flag-d1">0</span>
+          <span class="digit" id="flag-d2">1</span>
+          <span class="digit" id="flag-d3">0</span>
+        </div>
+      </div>
+
+      <!-- Start / new game button -->
+      <button class="btn-start" id="btn-start" title="Нова гра">
+        <span class="face">💀</span>
+      </button>
+
+      <!-- Timer -->
+      <div class="counter timer" title="Таймер">
+        <span class="counter-icon">⏳</span>
+        <div class="counter-digits">
+          <span class="digit" id="time-d1">0</span>
+          <span class="digit" id="time-d2">0</span>
+          <span class="digit" id="time-d3">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GAME FIELD ===== -->
+    <div class="field" id="field">
+      <!-- Row 1 — all closed -->
+      <div class="row">
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+      </div>
+      <!-- Row 2 — numbers 1-8 + empty opened -->
+      <div class="row">
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened num-2">2</div>
+        <div class="cell opened num-3">3</div>
+        <div class="cell opened num-4">4</div>
+        <div class="cell opened num-5">5</div>
+        <div class="cell opened num-6">6</div>
+        <div class="cell opened num-7">7</div>
+        <div class="cell opened num-8">8</div>
+        <div class="cell opened"></div>
+      </div>
+      <!-- Row 3 — special states demo -->
+      <div class="row">
+        <div class="cell flagged"></div>
+        <div class="cell flagged-mine"></div>
+        <div class="cell mine"></div>
+        <div class="cell mine-hit"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+      </div>
+      <!-- Row 4 -->
+      <div class="row">
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened num-2">2</div>
+        <div class="cell opened num-3">3</div>
+        <div class="cell opened"></div>
+        <div class="cell opened"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell closed"></div>
+      </div>
+      <!-- Row 5 -->
+      <div class="row">
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell opened"></div>
+        <div class="cell opened"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened num-2">2</div>
+        <div class="cell flagged"></div>
+        <div class="cell closed"></div>
+      </div>
+      <!-- Row 6 -->
+      <div class="row">
+        <div class="cell closed"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened"></div>
+        <div class="cell opened"></div>
+        <div class="cell opened"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell flagged"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+      </div>
+      <!-- Row 7 -->
+      <div class="row">
+        <div class="cell closed"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened"></div>
+        <div class="cell opened"></div>
+        <div class="cell opened"></div>
+        <div class="cell opened num-2">2</div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+      </div>
+      <!-- Row 8 -->
+      <div class="row">
+        <div class="cell closed"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened num-2">2</div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+      </div>
+      <!-- Row 9 -->
+      <div class="row">
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell opened"></div>
+        <div class="cell opened num-1">1</div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+        <div class="cell closed"></div>
+      </div>
+    </div>
+
+    <!-- ===== LEGEND ===== -->
+    <div class="legend">
+      <h3>Стани клітинок</h3>
+      <ul>
+        <li><span class="swatch cell closed"></span> Закрита</li>
+        <li><span class="swatch cell opened"></span> Відкрита (порожня)</li>
+        <li><span class="swatch cell opened num-3">3</span> Відкрита (з числом)</li>
+        <li><span class="swatch cell flagged"></span> Прапорець</li>
+        <li><span class="swatch cell flagged-mine"></span> Прапорець на міні</li>
+        <li><span class="swatch cell mine"></span> Міна (розкрита)</li>
+        <li><span class="swatch cell mine-hit"></span> Міна (натиснута)</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
