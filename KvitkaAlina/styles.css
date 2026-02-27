@@ -155,6 +155,7 @@ body {
 }
 
 .cell {
+  aspect-ratio: 1 / 1;
   position: relative;
   width: 100%;
   padding: 0;
@@ -174,16 +175,6 @@ body {
     border-color var(--transition-fast),
     color var(--transition-fast),
     filter var(--transition-fast);
-}
-
-.cell::before {
-  content: "";
-  display: block;
-  padding-bottom: 100%;
-}
-
-.cell > * {
-  position: absolute;
 }
 
 .cell--closed {
