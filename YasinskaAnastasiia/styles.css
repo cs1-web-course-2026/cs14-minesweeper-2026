@@ -121,17 +121,35 @@ body {
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
-
 /* Прапорець */
 .cell.flag {
   background: #ffe27a;
   position: relative;
+}
 
+.cell.flag::after {
+  content: "🚩";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
 
 /* Міна */
 .cell.mine {
   background: #ff6b6b;
   position: relative;
+}
+
+.cell.mine::after {
+  content: "💣";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
 
 
 /* Міна, на яку натиснули (вибух) */
