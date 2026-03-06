@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Minesweeper</title>
+	<link rel="stylesheet" href="styles.css">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+	<div class="wrap">
+		<div class="game">
+			<div class="header">
+				<div class="header-left">
+					<div>
+						<div class="caption">Таймер</div>
+						<div class="panel timer" id="timer">00:00</div>
+					</div>
+					<div>
+						<div class="caption">Прапорці</div>
+						<div class="panel flags" id="flags">0</div>
+					</div>
+				</div>
+				<div class="controls">
+					<button class="btn" id="restart">Нова гра</button>
+					<button class="btn ghost" id="themeToggle" aria-label="Переключить тему">🌙</button>
+				</div>
+			</div>
+
+			<div class="board-wrap">
+				<div class="board" id="board" aria-label="Minesweeper board"></div>
+			</div>
+
+			<!-- Overlay for defeat/victory messages -->
+			<div id="defeatOverlay" class="overlay" role="status" aria-hidden="true">
+				<div class="overlay-content">
+					<div class="overlay-title">DEFEAT</div>
+					<button id="overlayRestart" class="btn">Заново</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Налаштування (візуальна частина)
+		const ROWS = 9, COLS = 9, MINES = 10;
+		const boardEl = document.getElementById('board');
+		const timerEl = document.getElementById('timer');
+		const flagsEl = document.getElementById('flags');
+		const restartBtn = document.getElementById('restart');
+		let cells = [], started=false, timer=null, seconds=0, flags=0;
+		let gameOver = false;
+
+		function formatTime(s){ const mm = String(Math.floor(s/60)).padStart(2,'0'); const ss = String(s%60).padStart(2,'0'); return mm+':'+ss}
+
+		function setCols(n){ boardEl.style.setProperty('--cols', n); }
+
+		function buildEmpty(){ boardEl.innerHTML=''; cells = [];
+			setCols(COLS);
+			boardEl.style.width = '';
+			for(let r=0;r<ROWS;r++){
+				for(let c=0;c<COLS;c++){
+					const el = document.createElement('div'); el.className='cell closed'; el.dataset.r=r; el.dataset.c=c; el.tabIndex=0;
+					boardEl.appendChild(el);
+					cells.push({r,c,el, mine:false, open:false, flagged:false, adj:0});
+				}
+			}
+		}
+
+		function idx(r,c){return r*COLS+c}
+
+		function placeMines(seed=MINES){
+			// Просте випадкове розміщення — для демо візуалу
+			let placed=0; while(placed<seed){
+				const r=Math.floor(Math.random()*ROWS), c=Math.floor(Math.random()*COLS);
+				const cell = cells[idx(r,c)]; if(!cell.mine){cell.mine=true; placed++;}
+			}
+			cells.forEach(cell => {
+				let cnt=0; for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+					if(dr===0&&dc===0)continue; const rr=cell.r+dr, cc=cell.c+dc; if(rr<0||cc<0||rr>=ROWS||cc>=COLS) continue; if(cells[idx(rr,cc)].mine) cnt++;
+				} cell.adj=cnt;
+			});
+		}
+
+		function openCell(cell){ if(gameOver) return; if(cell.open||cell.flagged) return; cell.open=true; cell.el.classList.remove('closed'); cell.el.classList.add('open');
+			if(cell.mine){ cell.el.classList.add('mine','exploded'); gameOver = true; boardEl.classList.add('game-over'); revealAllMines(); stopTimer();
+				// show defeat overlay
+				const ov = document.getElementById('defeatOverlay'); if(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
+				return; }
+			if(cell.adj>0){ cell.el.classList.add('number-'+cell.adj); cell.el.textContent = cell.adj; }
+			else{ // flood fill
+				for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+					if(dr===0&&dc===0) continue; const rr=cell.r+dr, cc=cell.c+dc; if(rr<0||cc<0||rr>=ROWS||cc>=COLS) continue; const nb = cells[idx(rr,cc)]; if(!nb.open && !nb.mine) openCell(nb);
+				}
+			}
+		}
+
+		function revealAllMines(){ cells.forEach(c=>{ if(c.mine) c.el.classList.add('open','mine'); }) }
+
+		function toggleFlag(cell){
+			if(gameOver) return; if(cell.open) return;
+			// debounce rapid toggles (some browsers may fire multiple events)
+			const now = Date.now();
+			if(cell._lastFlag && (now - cell._lastFlag) < 300) return; // ignore rapid duplicate
+			cell._lastFlag = now;
+			cell.flagged = !cell.flagged;
+			if(cell.flagged){ cell.el.classList.add('flagged'); flags++; }
+			else { cell.el.classList.remove('flagged'); flags--; }
+			flagsEl.textContent = flags;
+		}
+
+		function startTimer(){ if(started) return; started=true; timer = setInterval(()=>{ seconds++; timerEl.textContent = formatTime(seconds); },1000); }
+		function stopTimer(){ clearInterval(timer); }
+
+		function attachEvents(){
+			boardEl.addEventListener('contextmenu', e=>{
+				e.preventDefault();
+				if(gameOver) return;
+				const el = e.target.closest('.cell'); if(!el) return; const c = cells[idx(+el.dataset.r, +el.dataset.c)];
+				toggleFlag(c);
+			});
+
+			// Use pointer events to support mouse and touch
+			let touchTimer = null;
+
+			boardEl.addEventListener('pointerdown', e=>{
+				if(gameOver) return;
+				const el = e.target.closest('.cell'); if(!el) return; const c = cells[idx(+el.dataset.r, +el.dataset.c)];
+				// start long-press on touch to toggle flag
+				if(e.pointerType === 'touch'){
+					touchTimer = setTimeout(()=>{ toggleFlag(c); touchTimer = null; }, 600);
+				}
+			});
+
+			boardEl.addEventListener('pointerup', e=>{ if(touchTimer){ clearTimeout(touchTimer); touchTimer = null; } });
+			boardEl.addEventListener('pointercancel', e=>{ if(touchTimer){ clearTimeout(touchTimer); touchTimer = null; } });
+
+			// (right-click handled via contextmenu to avoid duplicate toggles)
+
+			// click: open cell unless modifier held (Shift/Ctrl/Alt) => toggle flag
+			boardEl.addEventListener('click', e=>{
+				if(gameOver) return;
+				const el = e.target.closest('.cell'); if(!el) return; const c = cells[idx(+el.dataset.r, +el.dataset.c)];
+				if(e.shiftKey || e.ctrlKey || e.altKey){ toggleFlag(c); return; }
+				if(!started) startTimer(); openCell(c);
+			});
+		}
+
+		function newGame(){ stopTimer(); seconds=0; timerEl.textContent='00:00'; started=false; flags=0; flagsEl.textContent=flags; gameOver=false; buildEmpty(); placeMines(); attachEvents();
+			// hide overlay and board-over state
+			const ov = document.getElementById('defeatOverlay'); if(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
+			boardEl.classList.remove('game-over');
+		}
+
+		restartBtn.addEventListener('click', ()=> newGame());
+
+		// Theme toggle: support 'light' | 'dark' | 'system' (follow device)
+		const themeToggle = document.getElementById('themeToggle');
+		let currentTheme = 'system';
+		function systemPref(){ return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; }
+		function applyTheme(t, persist = true){
+			currentTheme = t;
+			if(t === 'system'){
+				const sys = systemPref();
+				if(sys === 'dark') document.body.setAttribute('data-theme','dark');
+				else document.body.removeAttribute('data-theme');
+				// icon for system
+				if(themeToggle) themeToggle.textContent = '🖥️';
+			} else if(t === 'dark'){
+				document.body.setAttribute('data-theme','dark');
+				if(themeToggle) themeToggle.textContent = '☀️';
+			} else {
+				document.body.removeAttribute('data-theme');
+				if(themeToggle) themeToggle.textContent = '🌙';
+			}
+			if(persist){ try{ localStorage.setItem('ms_theme', t); }catch(e){} }
+		}
+
+		// initialize: prefer saved, otherwise follow system (default)
+		const saved = (function(){ try{return localStorage.getItem('ms_theme')}catch(e){return null} })();
+		if(saved){ applyTheme(saved, false); }
+		else{ applyTheme('system', false); }
+
+		// react to system changes when in 'system' mode
+		if(window.matchMedia){
+			const mq = window.matchMedia('(prefers-color-scheme: dark)');
+			const mqHandler = (e)=>{ if(currentTheme === 'system') applyTheme('system', false); };
+			if(typeof mq.addEventListener === 'function') mq.addEventListener('change', mqHandler);
+			else if(typeof mq.addListener === 'function') mq.addListener(mqHandler);
+		}
+
+		// Clicking the toggle: if currently 'system' => switch to opposite of system and persist; otherwise toggle explicit themes
+		if(themeToggle){
+			themeToggle.addEventListener('click', ()=>{
+				if(currentTheme === 'system'){
+					const sys = systemPref(); applyTheme(sys === 'dark' ? 'light' : 'dark', true);
+				} else if(currentTheme === 'dark'){
+					applyTheme('light', true);
+				} else {
+					applyTheme('dark', true);
+				}
+			});
+		}
+
+		// Инициализация
+		newGame();
+
+		// overlay restart button
+		const overlayRestart = document.getElementById('overlayRestart');
+		if(overlayRestart){ overlayRestart.addEventListener('click', ()=>{ newGame(); }); }
+
+		// Image overlay behaviour for custom note — attach after DOM parsed
+		document.addEventListener('DOMContentLoaded', ()=>{
+			const customNote = document.getElementById('customNote');
+			const noteImageOverlay = document.getElementById('noteImageOverlay');
+			const imageClose = document.getElementById('imageClose');
+			if(!customNote || !noteImageOverlay) return;
+			customNote.addEventListener('click', ()=>{
+				noteImageOverlay.classList.add('show');
+				noteImageOverlay.setAttribute('aria-hidden','false');
+				imageClose && imageClose.focus();
+			});
+			imageClose && imageClose.addEventListener('click', ()=>{ noteImageOverlay.classList.remove('show'); noteImageOverlay.setAttribute('aria-hidden','true'); });
+			noteImageOverlay.addEventListener('click', (e)=>{ if(e.target === noteImageOverlay) { noteImageOverlay.classList.remove('show'); noteImageOverlay.setAttribute('aria-hidden','true'); } });
+			document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && noteImageOverlay.classList.contains('show')){ noteImageOverlay.classList.remove('show'); noteImageOverlay.setAttribute('aria-hidden','true'); } });
+		});
+	</script>
+
+		<!-- small user-editable note (bottom-right) -->
+		<div id="customNote">by Danylo Polivanov 👽</div>
+		<!-- Image overlay triggered by custom note -->
+		<div id="noteImageOverlay" class="image-overlay" aria-hidden="true">
+			<div class="image-wrap">
+				<button id="imageClose" class="btn ghost" aria-label="Close image">✕</button>
+				<img id="noteImage" src="https://i.pinimg.com/736x/15/87/ef/1587eff694d7034da6884c2536a3db50.jpg" alt="note image">
+			</div>
+		</div>
+</body>
+</html>
+
