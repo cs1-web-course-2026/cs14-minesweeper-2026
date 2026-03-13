@@ -14,12 +14,10 @@ align-items:center;
 padding:10px;
 }
 
-
 .container{
 width:100%;
 max-width:420px;
 }
-
 
 .game-wrapper{
 background:white;
@@ -28,14 +26,12 @@ padding:15px;
 box-shadow:0 10px 30px rgba(0,0,0,0.3);
 }
 
-
 .game-title{
 text-align:center;
 margin-bottom:15px;
 font-size:2em;
 color:#333;
 }
-
 
 .game-header{
 display:flex;
@@ -46,7 +42,6 @@ background:#f0f0f0;
 padding:10px;
 border-radius:8px;
 }
-
 
 .header-item{
 display:flex;
@@ -59,9 +54,7 @@ color:#555;
 .value{
 font-size:18px;
 font-weight:bold;
-color:#333;
 }
-
 
 .start-button{
 padding:6px 18px;
@@ -71,13 +64,11 @@ background:#667eea;
 color:white;
 cursor:pointer;
 font-weight:bold;
-transition:0.2s;
 }
 
 .start-button:hover{
 background:#5565d8;
 }
-
 
 .game-board{
 display:grid;
@@ -88,7 +79,6 @@ padding:6px;
 border-radius:8px;
 margin-bottom:10px;
 }
-
 
 .cell{
 aspect-ratio:1;
@@ -103,11 +93,9 @@ cursor:pointer;
 border-radius:3px;
 }
 
-
 .cell:hover{
 background:linear-gradient(#ececec,#b5b5b5);
 }
-
 
 .cell.revealed{
 background:#eee;
@@ -115,26 +103,23 @@ border:1px solid #aaa;
 cursor:default;
 }
 
-
 .cell.mine{
 background:#ff6b6b;
 color:white;
 }
 
-
 .cell.flagged{
 background:#fff3a0;
 }
 
-
-.demo-cells{
-display:flex;
-justify-content:center;
-gap:8px;
-margin-top:10px;
-margin-bottom:10px;
-}
-
+.n1{color:blue;}
+.n2{color:green;}
+.n3{color:red;}
+.n4{color:darkblue;}
+.n5{color:brown;}
+.n6{color:teal;}
+.n7{color:black;}
+.n8{color:gray;}
 
 .game-info{
 font-size:13px;
