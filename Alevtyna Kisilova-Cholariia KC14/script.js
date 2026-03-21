@@ -1,4 +1,3 @@
-// 1. Моделювання даних
 const gameState = {
   rows: 10,
   cols: 10,
@@ -9,7 +8,6 @@ const gameState = {
   field: []
 };
 
-// 2. Генерація поля та мін
 function generateField(rows, cols, minesCount) {
   const field = [];
   for (let r = 0; r < rows; r++) {
@@ -31,7 +29,6 @@ function generateField(rows, cols, minesCount) {
   return field;
 }
 
-// 3. Підрахунок мін навколо
 function countNeighbourMines(field) {
   for (let r = 0; r < field.length; r++) {
     for (let c = 0; c < field[0].length; c++) {
@@ -50,7 +47,6 @@ function countNeighbourMines(field) {
   }
 }
 
-// 4. Логіка відкриття (openCell) з рекурсією
 function openCell(row, col) {
   const cell = gameState.field[row][col];
   if (cell.state !== 'closed' || gameState.status !== 'process') return;
@@ -71,7 +67,6 @@ function openCell(row, col) {
   }
 }
 
-// Запуск гри (для перевірки в консолі)
 gameState.field = generateField(10, 10, 15);
 countNeighbourMines(gameState.field);
 gameState.timerId = setInterval(() => { gameState.gameTime++; }, 1000);
