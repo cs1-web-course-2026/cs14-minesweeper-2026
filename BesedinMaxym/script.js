@@ -66,7 +66,7 @@ function countNeighbourMines() {
 
   for (let row = 0; row < gameState.rows; row++) {
     for (let col = 0; col < gameState.cols; col++) {
-      // Пропускаємо клітинки з містами
+      // Пропускаємо клітинки з мінами
       if (gameState.grid[row][col].type === 'mine') {
         continue;
       }
@@ -250,6 +250,58 @@ function resetGame(rows, cols, minesCount) {
   generateField(rows, cols, minesCount);
 }
 
+/**
+ * Повертає масив координат усіх мін на полі
+ * @returns {Array<[number, number]>} - масив координат мін [row, col]
+ */
+function findMines() {
+  const mines = [];
+  for (let row = 0; row < gameState.rows; row++) {
+    for (let col = 0; col < gameState.cols; col++) {
+      if (gameState.grid[row][col].type === 'mine') {
+        mines.push([row, col]);
+      }
+    }
+  }
+  return mines;
+}
+
+/**
+ * Виводить поле гри у консоль для налагодження
+ * '.' - закрита клітинка
+ * 'F' - клітинка з прапорцем
+ * '*' - відкрита міна
+ * число - відкрита клітинка з кількістю сусідніх мін
+ * ' ' - відкрита пуста клітинка
+ */
+function debugPrintField() {
+  let output = '';
+  for (let row = 0; row < gameState.rows; row++) {
+    for (let col = 0; col < gameState.cols; col++) {
+      const cell = gameState.grid[row][col];
+      let char = '';
+
+      if (cell.state === 'closed') {
+        char = '.';
+      } else if (cell.state === 'flagged') {
+        char = 'F';
+      } else if (cell.state === 'opened') {
+        if (cell.type === 'mine') {
+          char = '*';
+        } else if (cell.neighborMines > 0) {
+          char = cell.neighborMines.toString();
+        } else {
+          char = ' ';
+        }
+      }
+
+      output += char;
+    }
+    output += '\n';
+  }
+  console.log(output);
+}
+
 // Експортуємо для можливості використання в HTML
 window.game = {
   generateField,
@@ -259,5 +311,7 @@ window.game = {
   stopTimer,
   resetGame,
   getCell,
-  getState: () => gameState
+  getState: () => gameState,
+  findMines,
+  debugPrintField
 };
