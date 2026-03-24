@@ -15,13 +15,11 @@ const CELL_CONTENT = {
   EMPTY: 'empty',
 };
 
-
 const DIRECTIONS = [
   [-1, -1], [-1, 0], [-1, 1],
   [ 0, -1],          [ 0, 1],
   [ 1, -1], [ 1, 0], [ 1, 1],
 ];
-
 
 const gameState = {
   rows: 10,
@@ -31,9 +29,9 @@ const gameState = {
   gameTime: 0,
   timerId: null,
   flagsCount: 0,
+  openedCellsCount: 0, 
   field: [],
 };
-
 
 function createCell() {
   return {
@@ -42,7 +40,6 @@ function createCell() {
     neighborMines: 0,
   };
 }
-
 
 function generateField(rows, cols, minesCount) {
   const field = Array.from({ length: rows }, () =>
@@ -63,22 +60,20 @@ function generateField(rows, cols, minesCount) {
   return field;
 }
 
-
 function countNeighborMines(field, rows, cols) {
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
       if (field[row][col].type === CELL_CONTENT.MINE) continue;
 
       let mineCount = 0;
-      for (const [directionalRow, directionalCol] of DIRECTIONS) {
-        const neighbourRow = row + directionalRow;
-        const neighbourCol = col + directionalCol;
+      for (const [dr, dc] of DIRECTIONS) {
+        const nr = row + dr;
+        const nc = col + dc;
+
         if (
-          neighbourRow >= 0 &&
-          neighbourRow < rows &&
-          neighbourCol >= 0 &&
-          neighbourCol < cols &&
-          field[neighbourRow][neighbourCol].type === CELL_CONTENT.MINE
+          nr >= 0 && nr < rows &&
+          nc >= 0 && nc < cols &&
+          field[nr][nc].type === CELL_CONTENT.MINE
         ) {
           mineCount++;
         }
@@ -88,7 +83,6 @@ function countNeighborMines(field, rows, cols) {
   }
 }
 
-
 function openCell(row, col) {
   if (gameState.status !== GAME_STATUS.PROCESS) return;
 
@@ -96,6 +90,8 @@ function openCell(row, col) {
   if (cell.state === CELL_STATE.OPENED || cell.state === CELL_STATE.FLAGGED) return;
 
   cell.state = CELL_STATE.OPENED;
+  gameState.openedCellsCount++; 
+
   updateCellUI(row, col);
 
   if (cell.type === CELL_CONTENT.MINE) {
@@ -104,23 +100,21 @@ function openCell(row, col) {
   }
 
   if (cell.neighborMines === 0) {
-    for (const [directionalRow, directionalCol] of DIRECTIONS) {
-      const neighbourRow = row + directionalRow;
-      const neighbourCol = col + directionalCol;
+    for (const [dr, dc] of DIRECTIONS) {
+      const nr = row + dr;
+      const nc = col + dc;
+
       if (
-        neighbourRow >= 0 &&
-        neighbourRow < gameState.rows &&
-        neighbourCol >= 0 &&
-        neighbourCol < gameState.cols
+        nr >= 0 && nr < gameState.rows &&
+        nc >= 0 && nc < gameState.cols
       ) {
-        openCell(neighbourRow, neighbourCol);
+        openCell(nr, nc);
       }
     }
   }
 
   checkWin();
 }
-
 
 function toggleFlag(row, col) {
   if (gameState.status !== GAME_STATUS.PROCESS) return;
@@ -131,7 +125,7 @@ function toggleFlag(row, col) {
   if (cell.state === CELL_STATE.CLOSED) {
     cell.state = CELL_STATE.FLAGGED;
     gameState.flagsCount++;
-  } else if (cell.state === CELL_STATE.FLAGGED) {
+  } else {
     cell.state = CELL_STATE.CLOSED;
     gameState.flagsCount--;
   }
@@ -144,18 +138,19 @@ function toggleFlag(row, col) {
 function startTimer() {
   stopTimer();
   gameState.gameTime = 0;
-  document.querySelectorAll('.header-item .value')[0].textContent = gameState.gameTime;
+
+  const timerEl = document.getElementById('timer');
+  timerEl.textContent = gameState.gameTime;
 
   gameState.timerId = setInterval(() => {
     gameState.gameTime++;
-    document.querySelectorAll('.header-item .value')[0].textContent = gameState.gameTime;
+    timerEl.textContent = gameState.gameTime;
   }, 1000);
 }
 
 function stopTimer() {
   clearInterval(gameState.timerId);
 }
-
 
 function gameOver(win) {
   gameState.status = win ? GAME_STATUS.WIN : GAME_STATUS.LOSE;
@@ -164,32 +159,26 @@ function gameOver(win) {
   alert(win ? 'Ви виграли!' : 'Ви програли!');
 }
 
-
 function checkWin() {
-  let closedOrFlagged = 0;
-  for (let row = 0; row < gameState.rows; row++) {
-    for (let col = 0; col < gameState.cols; col++) {
-      if (gameState.field[row][col].state !== CELL_STATE.OPENED) closedOrFlagged++;
-    }
-  }
-  if (closedOrFlagged === gameState.minesCount) {
+  const totalCells = gameState.rows * gameState.cols;
+  if (gameState.openedCellsCount === totalCells - gameState.minesCount) {
     gameOver(true);
   }
 }
-
 
 function revealAll(win = false) {
   for (let row = 0; row < gameState.rows; row++) {
     for (let col = 0; col < gameState.cols; col++) {
       const cell = gameState.field[row][col];
       if (cell.state !== CELL_STATE.OPENED) {
-        if (!win && cell.type === CELL_CONTENT.MINE) cell.state = CELL_STATE.OPENED;
+        if (!win && cell.type === CELL_CONTENT.MINE) {
+          cell.state = CELL_STATE.OPENED;
+        }
         updateCellUI(row, col);
       }
     }
   }
 }
-
 
 function updateCellUI(row, col) {
   const index = row * gameState.cols + col;
@@ -200,8 +189,11 @@ function updateCellUI(row, col) {
 
   if (cell.state === CELL_STATE.OPENED) {
     cellButton.classList.add('revealed');
-    if (cell.type === CELL_CONTENT.MINE) cellButton.textContent = '💣';
-    else if (cell.neighborMines > 0) cellButton.textContent = cell.neighborMines;
+    if (cell.type === CELL_CONTENT.MINE) {
+      cellButton.textContent = '💣';
+    } else if (cell.neighborMines > 0) {
+      cellButton.textContent = cell.neighborMines;
+    }
   } else if (cell.state === CELL_STATE.FLAGGED) {
     cellButton.classList.add('flagged');
     cellButton.textContent = '🚩';
@@ -210,15 +202,18 @@ function updateCellUI(row, col) {
   }
 }
 
-function updateFlagsUI() {
-  document.querySelectorAll('.header-item .value')[1].textContent = gameState.flagsCount;
-}
 
+function updateFlagsUI() {
+  const flagsEl = document.getElementById('flags');
+  flagsEl.textContent = gameState.flagsCount;
+}
 
 function initGame() {
   gameState.field = generateField(gameState.rows, gameState.cols, gameState.minesCount);
   gameState.status = GAME_STATUS.PROCESS;
   gameState.flagsCount = 0;
+  gameState.openedCellsCount = 0; 
+
   updateFlagsUI();
   startTimer();
 
@@ -239,7 +234,6 @@ function initGame() {
     }
   }
 }
-
 
 document.querySelector('.start-button').onclick = initGame;
 initGame();
