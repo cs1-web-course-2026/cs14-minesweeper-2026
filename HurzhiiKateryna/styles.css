@@ -1,0 +1,130 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Segoe UI, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+}
+
+.game-wrapper {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.game-title {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 2em;
+  color: #333;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  background: #f0f0f0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.header-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 13px;
+  color: #555;
+}
+
+.value {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.start-button {
+  padding: 6px 18px;
+  border: none;
+  border-radius: 20px;
+  background: #667eea;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.start-button:hover {
+  background: #5565d8;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+  background: #ddd;
+  padding: 6px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.cell {
+  aspect-ratio: 1;
+  background: linear-gradient(#e0e0e0,#999);
+  border: 1px solid #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.cell:hover, .cell:focus {
+  background: linear-gradient(#ececec,#b5b5b5);
+  outline: 2px solid #667eea;
+}
+
+.cell.revealed {
+  background: #eee;
+  border: 1px solid #aaa;
+  cursor: default;
+}
+
+.cell.mine {
+  background: #ff6b6b;
+  color: white;
+}
+
+.cell.flagged {
+  background: #fff3a0;
+}
+
+.n1{color:blue;}
+.n2{color:green;}
+.n3{color:red;}
+.n4{color:darkblue;}
+.n5{color:brown;}
+.n6{color:teal;}
+.n7{color:black;}
+.n8{color:gray;}
+
+.game-info {
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+  margin-top: 10px;
+}

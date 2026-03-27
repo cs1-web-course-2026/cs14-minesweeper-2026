@@ -1,0 +1,120 @@
+/* --- БАЗОВІ НАЛАШТУВАННЯ --- */
+
+* {
+    /* Враховуємо рамки та відступи у загальну ширину/висоту елемента */
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #008080; /* Класичний колір фону Windows 95 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Використання dvh для ідеального центрування на мобільних пристроях */
+    min-height: 100dvh;
+    font-family: sans-serif;
+}
+
+/* --- ГОЛОВНИЙ КОНТЕЙНЕР --- */
+
+.game-container {
+    background-color: #c0c0c0;
+    padding: 15px;
+    /* Ефект опуклої 3D-рамки */
+    border: 3px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+/* --- ХЕДЕР ГРИ (Панель управління) --- */
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    /* Ефект "втиснутої" панелі */
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 5px;
+}
+
+.stat-box {
+    background-color: black;
+    color: #ff0000;
+    font-family: monospace;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 2px 5px;
+    /* Рамка для цифрового табло */
+    border: 1px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.reset-button {
+    height: 40px;
+    width: 40px;
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Анімація натискання кнопки старту */
+.reset-button:active {
+    border-width: 1px;
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+/* --- ІГРОВЕ ПОЛЕ --- */
+
+.game-board {
+    /* Створення сітки 8x8 */
+    display: grid;
+    grid-template-columns: repeat(8, 30px);
+    grid-template-rows: repeat(8, 30px);
+    gap: 0px;
+    /* Рамка ігрового поля */
+    border: 3px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 5px;
+}
+
+/* --- СТИЛІ КЛІТИНКИ ТА ЇЇ СТАНІВ --- */
+
+.cell {
+    /* Початковий стан: закрита клітинка (випукла) */
+    border: 3px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }
+
+ /* Відкрита клітинка: стає плоскою */
+.cell.open {
+    border: 1px solid #7b7b7b;
+    font-size: 16px;
+ }
+
+/* Клітинка з міною і прапорцем*/
+.cell.mine-flagged {
+    background-color: green;
+}
+
+/* Стан вибуху (міни, на яку натиснули) */
+.cell.exploded {
+    background-color: red;
+    border-color: #7b7b7b;
+}
+
+/* Кольорова стилізація цифр (класичний Minesweeper) */
+.cell.mine-count-1 { color: blue; }
+.cell.mine-count-2 { color: green; }
+.cell.mine-count-3 { color: red; }
+.cell.mine-count-4 { color: darkblue; }
+.cell.mine-count-5 { color: darkred; }

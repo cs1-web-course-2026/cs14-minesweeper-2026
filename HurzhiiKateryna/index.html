@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minesweeper</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="game-wrapper">
+    <h1 class="game-title">Minesweeper</h1>
+
+    <div class="game-header">
+      <div class="header-item">
+        <span class="label">Час</span>
+        <span class="value">0</span>
+      </div>
+
+      <button class="start-button">Нова гра</button>
+
+      <div class="header-item">
+        <span class="label">Прапорців</span>
+        <span class="value">0</span>
+      </div>
+    </div>
+
+    
+    <div class="game-board" id="gameBoard" role="grid" tabindex="0" aria-label="Ігрове поле Мінного пошуку">
+
+      
+
+      
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed n1" role="gridcell" aria-label="Цифра 1">1</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed n2" role="gridcell" aria-label="Цифра 2">2</button>
+      <button class="cell flagged" role="gridcell" aria-label="Прапорець">🚩</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed n3" role="gridcell" aria-label="Цифра 3">3</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed mine" role="gridcell" aria-label="Бомба">💣</button>
+
+      
+      <button class="cell revealed n2" role="gridcell" aria-label="Цифра 2">2</button>
+      <button class="cell revealed n1" role="gridcell" aria-label="Цифра 1">1</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed n4" role="gridcell" aria-label="Цифра 4">4</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell flagged" role="gridcell" aria-label="Прапорець">🚩</button>
+      <button class="cell revealed n1" role="gridcell" aria-label="Цифра 1">1</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed mine" role="gridcell" aria-label="Бомба">💣</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+
+      
+      <button class="cell revealed n3" role="gridcell" aria-label="Цифра 3">3</button>
+      <button class="cell revealed n2" role="gridcell" aria-label="Цифра 2">2</button>
+      <button class="cell revealed" role="gridcell" aria-label="Відкрита порожня клітинка"></button>
+      <button class="cell revealed n5" role="gridcell" aria-label="Цифра 5">5</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell flagged" role="gridcell" aria-label="Прапорець">🚩</button>
+      <button class="cell revealed n1" role="gridcell" aria-label="Цифра 1">1</button>
+      <button class="cell revealed mine" role="gridcell" aria-label="Бомба">💣</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed n2" role="gridcell" aria-label="Цифра 2">2</button>
+
+      
+      <button class="cell revealed" role="gridcell" aria-label="Відкрита порожня клітинка"></button>
+      <button class="cell revealed n1" role="gridcell" aria-label="Цифра 1">1</button>
+      <button class="cell flagged" role="gridcell" aria-label="Прапорець">🚩</button>
+      <button class="cell revealed n3" role="gridcell" aria-label="Цифра 3">3</button>
+      <button class="cell revealed mine" role="gridcell" aria-label="Бомба">💣</button>
+      <button class="cell revealed n2" role="gridcell" aria-label="Цифра 2">2</button>
+      <button class="cell revealed n1" role="gridcell" aria-label="Цифра 1">1</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell flagged" role="gridcell" aria-label="Прапорець">🚩</button>
+      <button class="cell revealed n4" role="gridcell" aria-label="Цифра 4">4</button>
+
+      
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed n2" role="gridcell" aria-label="Цифра 2">2</button>
+      <button class="cell revealed mine" role="gridcell" aria-label="Бомба">💣</button>
+      <button class="cell revealed n1" role="gridcell" aria-label="Цифра 1">1</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed n3" role="gridcell" aria-label="Цифра 3">3</button>
+      <button class="cell revealed n2" role="gridcell" aria-label="Цифра 2">2</button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell revealed n1" role="gridcell" aria-label="Цифра 1">1</button>
+      <button class="cell flagged" role="gridcell" aria-label="Прапорець">🚩</button>
+
+      
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+
+      
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+
+      
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+
+      
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+
+      
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+      <button class="cell" role="gridcell" aria-label="Закрита клітинка"></button>
+
+    </div>
+
+    <div class="game-info">
+      <p>💡 Ліва кнопка миші: відкрити клітинку</p>
+      <p>🖱️ Права кнопка миші: поставити прапорець</p>
+      <p>⚙️ Кнопка "Нова гра": почати гру заново</p>
+      
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
