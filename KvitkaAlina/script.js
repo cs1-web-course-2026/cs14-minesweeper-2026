@@ -168,22 +168,22 @@ function generateField(excludedRow = null, excludedCol = null) {
   return field;
 }
 
-function clearCellPresentation(el) {
+function clearCellPresentation(element) {
   el.className = "cell";
   el.textContent = "";
 }
 
-function renderClosedCell(el) {
+function renderClosedCell(element) {
   el.classList.add("cell--closed");
   el.setAttribute("aria-label", "Закрита клітинка");
 }
 
-function renderFlaggedCell(el) {
+function renderFlaggedCell(element) {
   el.classList.add("cell--closed", "cell--flag");
   el.setAttribute("aria-label", "Клітинка з прапорцем");
 }
 
-function renderMineCell(el, cell) {
+function renderMineCell(element, cell) {
   el.classList.add("cell--open");
 
   if (cell.isExploded) {
@@ -196,7 +196,7 @@ function renderMineCell(el, cell) {
   el.setAttribute("aria-label", "Відкрита міна");
 }
 
-function renderOpenedSafeCell(el, cell) {
+function renderOpenedSafeCell(element, cell) {
   el.classList.add("cell--open");
 
   if (cell.neighborMines > 0) {
@@ -216,15 +216,15 @@ function renderCell(row, col) {
   const cell = getCellData(row, col);
   const el = getCellElement(row, col);
 
-  clearCellPresentation(el);
+  clearCellPresentationelement;
 
   if (cell.state === CELL_STATE.CLOSED) {
-    renderClosedCell(el);
+    renderClosedCellelement;
     return;
   }
 
   if (cell.state === CELL_STATE.FLAGGED) {
-    renderFlaggedCell(el);
+    renderFlaggedCellelement;
     return;
   }
 
@@ -432,9 +432,9 @@ function toggleFlag(row, col) {
 
 function handleClick(e) {
   const el = e.target.closest(".cell");
-  if (!el || !boardElement.contains(el)) return;
+  if (!el || !boardElement.containselement) return;
 
-  const index = cellElements.indexOf(el);
+  const index = cellElements.indexOfelement;
   const row = Math.floor(index / GAME_CONFIG.COLS);
   const col = index % GAME_CONFIG.COLS;
 
@@ -443,11 +443,11 @@ function handleClick(e) {
 
 function handleRightClick(e) {
   const el = e.target.closest(".cell");
-  if (!el || !boardElement.contains(el)) return;
+  if (!el || !boardElement.containselement) return;
 
   e.preventDefault();
 
-  const index = cellElements.indexOf(el);
+  const index = cellElements.indexOfelement;
   const row = Math.floor(index / GAME_CONFIG.COLS);
   const col = index % GAME_CONFIG.COLS;
 
