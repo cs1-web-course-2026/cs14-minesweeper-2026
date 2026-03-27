@@ -405,14 +405,27 @@ function stopTimerGlobal() {
 
 // Експортуємо для можливості використання в HTML
 window.game = {
+  // Чисті функції для тестування
   generateField,
   openCell,
   toggleFlag,
+  countNeighbourMines,
+  checkWinCondition,
+  revealAllMines,
+  getCell,
+  resetGame,
+  findMines,
+  debugPrintField,
   startTimer,
   stopTimer,
-  resetGame,
-  getCell,
-  getState: () => gameState,
-  findMines,
-  debugPrintField
+  
+  // Глобальні функції для UI
+  initializeGame,
+  openCellGlobal,
+  toggleFlagGlobal,
+  resetGameGlobal,
+  stopTimerGlobal,
+  
+  // Прямий доступ до глобального стану (для UI)
+  getState: () => gameState
 };
