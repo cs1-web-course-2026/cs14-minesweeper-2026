@@ -51,7 +51,6 @@ function countNeighbourMines(field) {
         for (let j = -1; j <= 1; j++) {
           const nr = r + i;
           const nc = c + j;
-          // Використовуємо нову функцію isValidCell
           if (isValidCell(nr, nc) && field[nr][nc].type === CELL_TYPE.MINE) {
             count++;
           }
@@ -79,7 +78,6 @@ function openCell(row, col) {
       for (let j = -1; j <= 1; j++) {
         const nr = row + i;
         const nc = col + j;
-        // Використовуємо нову функцію isValidCell
         if (isValidCell(nr, nc)) {
           openCell(nr, nc);
         }
@@ -110,18 +108,15 @@ function endGame(status) {
   console.log(`Гра завершена: ${status === GAME_STATUS.WIN ? 'ПЕРЕМОГА!' : 'ПОРАЗКА!'}`);
 }
 
-// 2. Оптимізована перевірка перемоги (через return, щоб вийти з обох циклів одразу)
 function checkWin() {
   for (let r = 0; r < gameState.rows; r++) {
     for (let c = 0; c < gameState.cols; c++) {
       const cell = gameState.field[r][c];
-      // Якщо знайшли хоча б одну закриту порожню клітинку — гра продовжується
       if (cell.type === CELL_TYPE.EMPTY && cell.state === CELL_STATE.CLOSED) {
         return; 
       }
     }
   }
-  // Якщо пройшли всі цикли і не знайшли закритих порожніх клітинок — перемога
   endGame(GAME_STATUS.WIN);
 }
 
