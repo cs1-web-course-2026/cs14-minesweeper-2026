@@ -91,15 +91,15 @@ function getCellData(row, col) {
 }
 
 function forEachNeighbour(row, col, callback) {
-  for (let r = -1; r <= 1; r++) {
-    for (let c = -1; c <= 1; c++) {
-      if (r === 0 && c === 0) continue;
+  for (let directionalRow = -1; directionalRow <= 1; directionalRow++) {
+    for (let directionalCol = -1; directionalCol <= 1; directionalCol++) {
+      if (directionalRow === 0 && directionalCol === 0) continue;
 
-      const nr = row + r;
-      const nc = col + c;
+      const neighbourRow = row + directionalRow;
+      const neighbourCol = col + directionalCol;
 
-      if (isInsideBoard(nr, nc)) {
-        callback(nr, nc);
+      if (isInsideBoard(neighbourRow, neighbourCol)) {
+        callback(neighbourRow, neighbourCol);
       }
     }
   }
