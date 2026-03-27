@@ -44,6 +44,8 @@
   border-radius: 4px;
   font-size: 24px;
   border: 2px solid #333;
+  min-width: 70px;
+  text-align: center;
 }
 .reset-button {
   transition: transform 0.3s ease;
