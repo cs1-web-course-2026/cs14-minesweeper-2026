@@ -22,45 +22,39 @@ const DIRECTIONS = [
   [1, -1],  [1, 0],  [1, 1]
 ];
 
-// Глобальний об'єкт стану гри
-const gameState = {
-  rows: 0,
-  cols: 0,
-  minesCount: 0,
-  status: GAME_STATUS.PROCESS,
-  gameTime: 0,
-  timerId: null,
-  grid: []
-};
+// Глобальний об'єкт стану гри (тільки для консольних демонстрацій і UI інтеграції)
+let gameState = null;
 
 /**
  * Ініціалізує поле гри з випадковим розставленням мін
  * @param {number} rows - кількість рядків
  * @param {number} cols - кількість стовпців
  * @param {number} minesCount - кількість мін
+ * @returns {Object} - новий об'єкт стану гри
  */
 function generateField(rows, cols, minesCount) {
   // Валідація вхідних даних
   if (minesCount >= rows * cols) {
     console.warn('minesCount не повинно бути >= rows * cols');
-    return;
+    return null;
   }
 
-  // Зупиняємо таймер, якщо гра вже йде
-  stopTimer();
-
-  gameState.rows = rows;
-  gameState.cols = cols;
-  gameState.minesCount = minesCount;
-  gameState.status = GAME_STATUS.PROCESS;
-  gameState.gameTime = 0;
-  gameState.grid = [];
+  // Створюємо новий стан
+  const state = {
+    rows: rows,
+    cols: cols,
+    minesCount: minesCount,
+    status: GAME_STATUS.PROCESS,
+    gameTime: 0,
+    timerId: null,
+    grid: []
+  };
 
   // Створюємо порожне поле
   for (let row = 0; row < rows; row++) {
-    gameState.grid[row] = [];
+    state.grid[row] = [];
     for (let col = 0; col < cols; col++) {
-      gameState.grid[row][col] = {
+      state.grid[row][col] = {
         type: CELL_TYPE.EMPTY,
         state: CELL_STATE.CLOSED,
         neighborMines: 0
@@ -75,26 +69,28 @@ function generateField(rows, cols, minesCount) {
     const randomCol = Math.floor(Math.random() * cols);
 
     // Якщо клітинка вже містить міну, пропускаємо
-    if (gameState.grid[randomRow][randomCol].type === CELL_TYPE.MINE) {
+    if (state.grid[randomRow][randomCol].type === CELL_TYPE.MINE) {
       continue;
     }
 
-    gameState.grid[randomRow][randomCol].type = CELL_TYPE.MINE;
+    state.grid[randomRow][randomCol].type = CELL_TYPE.MINE;
     placedMines++;
   }
 
   // Обчислюємо кількість сусідніх мін для кожної клітинки
-  countNeighbourMines();
+  return countNeighbourMines(state);
 }
 
 /**
  * Обчислює кількість мін у сусідніх клітинках для всього поля
+ * @param {Object} state - об'єкт стану гри
+ * @returns {Object} - оновлено стан гри
  */
-function countNeighbourMines() {
-  for (let row = 0; row < gameState.rows; row++) {
-    for (let col = 0; col < gameState.cols; col++) {
+function countNeighbourMines(state) {
+  for (let row = 0; row < state.rows; row++) {
+    for (let col = 0; col < state.cols; col++) {
       // Пропускаємо клітинки з мінами
-      if (gameState.grid[row][col].type === CELL_TYPE.MINE) {
+      if (state.grid[row][col].type === CELL_TYPE.MINE) {
         continue;
       }
 
@@ -106,41 +102,44 @@ function countNeighbourMines() {
         const newCol = col + dCol;
 
         // Перевіряємо межі поля
-        if (newRow >= 0 && newRow < gameState.rows &&
-            newCol >= 0 && newCol < gameState.cols) {
-          if (gameState.grid[newRow][newCol].type === CELL_TYPE.MINE) {
+        if (newRow >= 0 && newRow < state.rows &&
+            newCol >= 0 && newCol < state.cols) {
+          if (state.grid[newRow][newCol].type === CELL_TYPE.MINE) {
             mineCount++;
           }
         }
       }
 
-      gameState.grid[row][col].neighborMines = mineCount;
+      state.grid[row][col].neighborMines = mineCount;
     }
   }
+  return state;
 }
 
 /**
  * Відкриває клітинку. Якщо міна — гра програна.
  * Якщо навколо 0 мін — рекурсивно відкриває сусідів.
+ * @param {Object} state - об'єкт стану гри
  * @param {number} row - номер рядка
  * @param {number} col - номер стовпця
+ * @returns {Object} - оновлено стан гри
  */
-function openCell(row, col) {
+function openCell(state, row, col) {
   // Перевіряємо валідність координат
-  if (row < 0 || row >= gameState.rows || col < 0 || col >= gameState.cols) {
-    return;
+  if (row < 0 || row >= state.rows || col < 0 || col >= state.cols) {
+    return state;
   }
 
-  const cell = gameState.grid[row][col];
+  const cell = state.grid[row][col];
 
   // Клітинка вже відкрита або позначена флагом
   if (cell.state !== CELL_STATE.CLOSED) {
-    return;
+    return state;
   }
 
   // Гра вже закінчена
-  if (gameState.status !== GAME_STATUS.PROCESS) {
-    return;
+  if (state.status !== GAME_STATUS.PROCESS) {
+    return state;
   }
 
   // Відкриваємо клітинку
@@ -148,39 +147,40 @@ function openCell(row, col) {
 
   // Гра провалена
   if (cell.type === CELL_TYPE.MINE) {
-    gameState.status = GAME_STATUS.LOSE;
-    stopTimer();
-    revealAllMines();
-    return;
+    state.status = GAME_STATUS.LOSE;
+    revealAllMines(state);
+    return state;
   }
 
   // Рекурсивне відкриття сусідніх порожніх клітинок
   if (cell.neighborMines === 0) {
     for (const [dRow, dCol] of DIRECTIONS) {
-      openCell(row + dRow, col + dCol);
+      openCell(state, row + dRow, col + dCol);
     }
   }
 
   // Перевіряємо умову перемоги
-  checkWinCondition();
+  return checkWinCondition(state);
 }
 
 /**
  * Перемикає флаг на клітинці між 'closed' і 'flagged'
+ * @param {Object} state - об'єкт стану гри
  * @param {number} row - номер рядка
  * @param {number} col - номер стовпця
+ * @returns {Object} - оновлено стан гри
  */
-function toggleFlag(row, col) {
+function toggleFlag(state, row, col) {
   // Перевіряємо валідність координат
-  if (row < 0 || row >= gameState.rows || col < 0 || col >= gameState.cols) {
-    return;
+  if (row < 0 || row >= state.rows || col < 0 || col >= state.cols) {
+    return state;
   }
 
-  const cell = gameState.grid[row][col];
+  const cell = state.grid[row][col];
 
   // Гра вже закінчена
-  if (gameState.status !== GAME_STATUS.PROCESS) {
-    return;
+  if (state.status !== GAME_STATUS.PROCESS) {
+    return state;
   }
 
   // Можна позначити флагом тільки закриту клітинку
@@ -190,74 +190,89 @@ function toggleFlag(row, col) {
     cell.state = CELL_STATE.CLOSED;
   }
   // Якщо клітинка відкрита, нічого не робимо
+
+  return state;
 }
 
 /**
- * Стартує таймер гри. Збільшує gameTime щосекунди
+ * Стартує таймер для об'єкту стану гри
+ * @param {Object} state - об'єкт стану гри
+ * @returns {Object} - оновлено стан гри
  */
-function startTimer() {
-  if (gameState.timerId !== null) {
-    return; // Таймер уже працює
+function startTimer(state) {
+  if (state.timerId !== null) {
+    return state; // Таймер уже працює
   }
 
-  gameState.timerId = setInterval(() => {
-    gameState.gameTime++;
+  state.timerId = setInterval(() => {
+    state.gameTime++;
   }, 1000);
+  
+  return state;
 }
 
 /**
- * Зупиняє таймер гри
+ * Зупиняє таймер для об'єкту стану гри
+ * @param {Object} state - об'єкт стану гри
+ * @returns {Object} - оновлено стан гри
  */
-function stopTimer() {
-  if (gameState.timerId !== null) {
-    clearInterval(gameState.timerId);
-    gameState.timerId = null;
+function stopTimer(state) {
+  if (state.timerId !== null) {
+    clearInterval(state.timerId);
+    state.timerId = null;
   }
+  return state;
 }
 
 /**
  * Перевіряє умову перемоги: усі не-мінні клітинки повинні бути відкриті
+ * @param {Object} state - об'єкт стану гри
+ * @returns {Object} - оновлено стан гри
  */
-function checkWinCondition() {
-  for (let row = 0; row < gameState.rows; row++) {
-    for (let col = 0; col < gameState.cols; col++) {
-      const cell = gameState.grid[row][col];
+function checkWinCondition(state) {
+  for (let row = 0; row < state.rows; row++) {
+    for (let col = 0; col < state.cols; col++) {
+      const cell = state.grid[row][col];
       // Якщо порожня клітинка закрита — гра не закінчена
       if (cell.type === CELL_TYPE.EMPTY && cell.state !== CELL_STATE.OPENED) {
-        return;
+        return state;
       }
     }
   }
 
   // Усі порожні клітинки відкриті — гра виграна
-  gameState.status = GAME_STATUS.WIN;
-  stopTimer();
+  state.status = GAME_STATUS.WIN;
+  return state;
 }
 
 /**
  * Розкриває всі міни при програші
+ * @param {Object} state - об'єкт стану гри
+ * @returns {Object} - оновлено стан гри
  */
-function revealAllMines() {
-  for (let row = 0; row < gameState.rows; row++) {
-    for (let col = 0; col < gameState.cols; col++) {
-      if (gameState.grid[row][col].type === CELL_TYPE.MINE) {
-        gameState.grid[row][col].state = CELL_STATE.OPENED;
+function revealAllMines(state) {
+  for (let row = 0; row < state.rows; row++) {
+    for (let col = 0; col < state.cols; col++) {
+      if (state.grid[row][col].type === CELL_TYPE.MINE) {
+        state.grid[row][col].state = CELL_STATE.OPENED;
       }
     }
   }
+  return state;
 }
 
 /**
  * Отримує клітинку за координатами
+ * @param {Object} state - об'єкт стану гри
  * @param {number} row - номер рядка
  * @param {number} col - номер стовпця
  * @returns {Object|null} - об'єкт клітинки або null
  */
-function getCell(row, col) {
-  if (row < 0 || row >= gameState.rows || col < 0 || col >= gameState.cols) {
+function getCell(state, row, col) {
+  if (row < 0 || row >= state.rows || col < 0 || col >= state.cols) {
     return null;
   }
-  return gameState.grid[row][col];
+  return state.grid[row][col];
 }
 
 /**
@@ -265,21 +280,22 @@ function getCell(row, col) {
  * @param {number} rows - кількість рядків
  * @param {number} cols - кількість стовпців
  * @param {number} minesCount - кількість мін
+ * @returns {Object} - новий об'єкт стану гри
  */
 function resetGame(rows, cols, minesCount) {
-  stopTimer();
-  generateField(rows, cols, minesCount);
+  return generateField(rows, cols, minesCount);
 }
 
 /**
  * Повертає масив координат усіх мін на полі
+ * @param {Object} state - об'єкт стану гри
  * @returns {Array<[number, number]>} - масив координат мін [row, col]
  */
-function findMines() {
+function findMines(state) {
   const mines = [];
-  for (let row = 0; row < gameState.rows; row++) {
-    for (let col = 0; col < gameState.cols; col++) {
-      if (gameState.grid[row][col].type === CELL_TYPE.MINE) {
+  for (let row = 0; row < state.rows; row++) {
+    for (let col = 0; col < state.cols; col++) {
+      if (state.grid[row][col].type === CELL_TYPE.MINE) {
         mines.push([row, col]);
       }
     }
@@ -294,12 +310,13 @@ function findMines() {
  * '*' - відкрита міна
  * число - відкрита клітинка з кількістю сусідніх мін
  * ' ' - відкрита порожня клітинка
+ * @param {Object} state - об'єкт стану гри
  */
-function debugPrintField() {
+function debugPrintField(state) {
   let output = '';
-  for (let row = 0; row < gameState.rows; row++) {
-    for (let col = 0; col < gameState.cols; col++) {
-      const cell = gameState.grid[row][col];
+  for (let row = 0; row < state.rows; row++) {
+    for (let col = 0; col < state.cols; col++) {
+      const cell = state.grid[row][col];
       let char = '';
 
       if (cell.state === CELL_STATE.CLOSED) {
@@ -321,6 +338,69 @@ function debugPrintField() {
     output += '\n';
   }
   console.log(output);
+}
+
+// ===== ГЛОБАЛЬНІ ФУНКЦІЇ ДЛЯ UI (обгортки навколо чистих функцій) =====
+
+/**
+ * Ініціалізує глобальний стан гри і запускає таймер
+ * @param {number} rows - кількість рядків
+ * @param {number} cols - кількість стовпців
+ * @param {number} minesCount - кількість мін
+ */
+function initializeGame(rows, cols, minesCount) {
+  gameState = generateField(rows, cols, minesCount);
+  if (gameState) {
+    gameState = startTimer(gameState);
+  }
+  return gameState;
+}
+
+/**
+ * Глобальна функція для відкриття клітинки
+ * @param {number} row - номер рядка
+ * @param {number} col - номер стовпця
+ */
+function openCellGlobal(row, col) {
+  if (gameState) {
+    gameState = openCell(gameState, row, col);
+    if (gameState.status !== GAME_STATUS.PROCESS) {
+      gameState = stopTimer(gameState);
+    }
+  }
+}
+
+/**
+ * Глобальна функція для перемикання флага
+ * @param {number} row - номер рядка
+ * @param {number} col - номер стовпця
+ */
+function toggleFlagGlobal(row, col) {
+  if (gameState) {
+    gameState = toggleFlag(gameState, row, col);
+  }
+}
+
+/**
+ * Глобальна функція для перезапуску гри
+ * @param {number} rows - кількість рядків
+ * @param {number} cols - кількість стовпців
+ * @param {number} minesCount - кількість мін
+ */
+function resetGameGlobal(rows, cols, minesCount) {
+  if (gameState) {
+    gameState = stopTimer(gameState);
+  }
+  return initializeGame(rows, cols, minesCount);
+}
+
+/**
+ * Глобальна функція для зупинки таймера
+ */
+function stopTimerGlobal() {
+  if (gameState) {
+    gameState = stopTimer(gameState);
+  }
 }
 
 // Експортуємо для можливості використання в HTML
