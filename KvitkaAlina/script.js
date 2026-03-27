@@ -142,9 +142,9 @@ function placeMines(field, excludedRow = null, excludedCol = null) {
 function countNeighbourMines(field, row, col) {
   let count = 0;
 
-  forEachNeighbour(row, col, (r, c) => {
-    if (field[r][c].type === CELL_TYPE.MINE) count++;
-  });
+  forEachNeighbour(row, col, (neighbourRow, neighbourCol) => {
+  if (field[neighbourRow][neighbourCol].type === CELL_TYPE.MINE) count++;
+});
 
   return count;
 }
