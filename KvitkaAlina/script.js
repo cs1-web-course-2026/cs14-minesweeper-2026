@@ -206,6 +206,7 @@ function renderOpenedSafeCell(element, cell) {
       "aria-label",
       `Відкрита клітинка, ${cell.neighborMines} мін поруч`
     );
+    
     return;
   }
 
