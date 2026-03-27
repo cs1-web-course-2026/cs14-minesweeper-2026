@@ -12,7 +12,6 @@ const gameState = {
   field: []
 };
 
-// 1. Допоміжна функція для перевірки меж (порада Аліни)
 function isValidCell(r, c) {
   return r >= 0 && r < gameState.rows && c >= 0 && c < gameState.cols;
 }
