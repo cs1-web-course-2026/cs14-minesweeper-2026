@@ -12,6 +12,11 @@ const gameState = {
   field: []
 };
 
+// 1. Допоміжна функція для перевірки меж (порада Аліни)
+function isValidCell(r, c) {
+  return r >= 0 && r < gameState.rows && c >= 0 && c < gameState.cols;
+}
+
 function generateField(rows, cols, minesCount) {
   const field = [];
   for (let r = 0; r < rows; r++) {
@@ -39,18 +44,17 @@ function generateField(rows, cols, minesCount) {
 }
 
 function countNeighbourMines(field) {
-  const rows = field.length;
-  const cols = field[0].length;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
+  for (let r = 0; r < gameState.rows; r++) {
+    for (let c = 0; c < gameState.cols; c++) {
       if (field[r][c].type === CELL_TYPE.MINE) continue;
       let count = 0;
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           const nr = r + i;
           const nc = c + j;
-          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
-            if (field[nr][nc].type === CELL_TYPE.MINE) count++;
+          // Використовуємо нову функцію isValidCell
+          if (isValidCell(nr, nc) && field[nr][nc].type === CELL_TYPE.MINE) {
+            count++;
           }
         }
       }
@@ -76,7 +80,8 @@ function openCell(row, col) {
       for (let j = -1; j <= 1; j++) {
         const nr = row + i;
         const nc = col + j;
-        if (nr >= 0 && nr < gameState.rows && nc >= 0 && nc < gameState.cols) {
+        // Використовуємо нову функцію isValidCell
+        if (isValidCell(nr, nc)) {
           openCell(nr, nc);
         }
       }
@@ -106,17 +111,19 @@ function endGame(status) {
   console.log(`Гра завершена: ${status === GAME_STATUS.WIN ? 'ПЕРЕМОГА!' : 'ПОРАЗКА!'}`);
 }
 
+// 2. Оптимізована перевірка перемоги (через return, щоб вийти з обох циклів одразу)
 function checkWin() {
-  let hasClosedEmpty = false;
   for (let r = 0; r < gameState.rows; r++) {
     for (let c = 0; c < gameState.cols; c++) {
-      if (gameState.field[r][c].type === CELL_TYPE.EMPTY && gameState.field[r][c].state === CELL_STATE.CLOSED) {
-        hasClosedEmpty = true;
-        break;
+      const cell = gameState.field[r][c];
+      // Якщо знайшли хоча б одну закриту порожню клітинку — гра продовжується
+      if (cell.type === CELL_TYPE.EMPTY && cell.state === CELL_STATE.CLOSED) {
+        return; 
       }
     }
   }
-  if (!hasClosedEmpty) endGame(GAME_STATUS.WIN);
+  // Якщо пройшли всі цикли і не знайшли закритих порожніх клітинок — перемога
+  endGame(GAME_STATUS.WIN);
 }
 
 function initGame() {
