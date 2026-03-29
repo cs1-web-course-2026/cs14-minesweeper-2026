@@ -110,19 +110,15 @@ function startTimer() {
   gameState.gameTime = 0;
   gameState.timerId = setInterval(() => {
     gameState.gameTime++;
+    console.log(`Таймер: ${gameState.gameTime} сек.`);
   }, 1000);
 }
 
-function endGame(status) {
-  gameState.status = status;
-  clearInterval(gameState.timerId);
-}
-
 
 function endGame(status) {
   gameState.status = status;
   clearInterval(gameState.timerId);
-  console.log(`Гра завершена: ${status === GAME_STATUS.WIN ? 'ПЕРЕМОГА!' : 'ПОРАЗКА!'}`);
+  console.log(`Гру завершено зі статусом: ${status}`);
 }
 
 
