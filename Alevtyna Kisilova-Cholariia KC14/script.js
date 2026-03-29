@@ -18,9 +18,11 @@ const gameState = {
   field: []
 };
 
+
 function isValidCell(row, col) {
   return row >= 0 && row < gameState.rows && col >= 0 && col < gameState.cols;
 }
+
 
 function generateField(rows, cols, minesCount) {
   const field = [];
@@ -48,6 +50,7 @@ function generateField(rows, cols, minesCount) {
   return field;
 }
 
+
 function countNeighbourMines(field) {
   const rows = field.length;
   const cols = field[0].length;
@@ -69,7 +72,10 @@ function countNeighbourMines(field) {
   }
 }
 
+
 function openCell(row, col) {
+  if (!isValidCell(row, col)) return;
+
   const cell = gameState.field[row][col];
   if (cell.state !== CELL_STATE.CLOSED || gameState.status !== GAME_STATUS.PROCESS) return;
 
@@ -85,19 +91,19 @@ function openCell(row, col) {
     for (const [directionalRow, directionalCol] of DIRECTIONS) {
       const neighbourRow = row + directionalRow;
       const neighbourCol = col + directionalCol;
-      if (isValidCell(neighbourRow, neighbourCol)) {
-        openCell(neighbourRow, neighbourCol);
-      }
+      openCell(neighbourRow, neighbourCol);
     }
   }
   checkWin();
 }
+
 
 function toggleFlag(row, col) {
   const cell = gameState.field[row][col];
   if (cell.state === CELL_STATE.OPENED || gameState.status !== GAME_STATUS.PROCESS) return;
   cell.state = cell.state === CELL_STATE.FLAGGED ? CELL_STATE.CLOSED : CELL_STATE.FLAGGED;
 }
+
 
 function startTimer() {
   if (gameState.timerId) clearInterval(gameState.timerId);
@@ -107,10 +113,12 @@ function startTimer() {
   }, 1000);
 }
 
+
 function endGame(status) {
   gameState.status = status;
   clearInterval(gameState.timerId);
 }
+
 
 function checkWin() {
   for (let row = 0; row < gameState.rows; row++) {
@@ -123,6 +131,7 @@ function checkWin() {
   }
   endGame(GAME_STATUS.WIN);
 }
+
 
 function initGame() {
   gameState.status = GAME_STATUS.PROCESS;
