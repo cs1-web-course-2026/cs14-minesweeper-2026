@@ -110,8 +110,12 @@ function startTimer() {
   gameState.gameTime = 0;
   gameState.timerId = setInterval(() => {
     gameState.gameTime++;
-    console.log(`Час гри: ${gameState.gameTime} сек.`);
   }, 1000);
+}
+
+function endGame(status) {
+  gameState.status = status;
+  clearInterval(gameState.timerId);
 }
 
 
