@@ -23,6 +23,7 @@ function isValidCell(row, col) {
   return row >= 0 && row < gameState.rows && col >= 0 && col < gameState.cols;
 }
 
+
 function generateField(rows, cols, minesCount) {
   const field = [];
   for (let row = 0; row < rows; row++) {
