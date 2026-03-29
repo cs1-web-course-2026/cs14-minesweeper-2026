@@ -2,6 +2,12 @@ const GAME_STATUS = { PROCESS: 'process', WIN: 'win', LOSE: 'lose' };
 const CELL_TYPE = { MINE: 'mine', EMPTY: 'empty' };
 const CELL_STATE = { CLOSED: 'closed', OPENED: 'opened', FLAGGED: 'flagged' };
 
+const DIRECTIONS = [
+  [-1, -1], [-1, 0], [-1, 1],
+  [0, -1],           [0, 1],
+  [1, -1],  [1, 0],  [1, 1],
+];
+
 const gameState = {
   rows: 10,
   cols: 10,
@@ -12,30 +18,30 @@ const gameState = {
   field: []
 };
 
-function isValidCell(r, c) {
-  return r >= 0 && r < gameState.rows && c >= 0 && c < gameState.cols;
+function isValidCell(row, col) {
+  return row >= 0 && row < gameState.rows && col >= 0 && col < gameState.cols;
 }
 
 function generateField(rows, cols, minesCount) {
   const field = [];
-  for (let r = 0; r < rows; r++) {
-    const row = [];
-    for (let c = 0; c < cols; c++) {
-      row.push({
+  for (let row = 0; row < rows; row++) {
+    const rowArray = [];
+    for (let col = 0; col < cols; col++) {
+      rowArray.push({
         type: CELL_TYPE.EMPTY,
         neighborMines: 0,
         state: CELL_STATE.CLOSED
       });
     }
-    field.push(row);
+    field.push(rowArray);
   }
 
   let placedMines = 0;
   while (placedMines < minesCount) {
-    const r = Math.floor(Math.random() * rows);
-    const c = Math.floor(Math.random() * cols);
-    if (field[r][c].type !== CELL_TYPE.MINE) {
-      field[r][c].type = CELL_TYPE.MINE;
+    const row = Math.floor(Math.random() * rows);
+    const col = Math.floor(Math.random() * cols);
+    if (field[row][col].type !== CELL_TYPE.MINE) {
+      field[row][col].type = CELL_TYPE.MINE;
       placedMines++;
     }
   }
@@ -43,20 +49,22 @@ function generateField(rows, cols, minesCount) {
 }
 
 function countNeighbourMines(field) {
-  for (let r = 0; r < gameState.rows; r++) {
-    for (let c = 0; c < gameState.cols; c++) {
-      if (field[r][c].type === CELL_TYPE.MINE) continue;
+  const rows = field.length;
+  const cols = field[0].length;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      if (field[row][col].type === CELL_TYPE.MINE) continue;
+      
       let count = 0;
-      for (let i = -1; i <= 1; i++) {
-        for (let j = -1; j <= 1; j++) {
-          const nr = r + i;
-          const nc = c + j;
-          if (isValidCell(nr, nc) && field[nr][nc].type === CELL_TYPE.MINE) {
-            count++;
-          }
+      for (const [directionalRow, directionalCol] of DIRECTIONS) {
+        const neighbourRow = row + directionalRow;
+        const neighbourCol = col + directionalCol;
+        if (isValidCell(neighbourRow, neighbourCol) && field[neighbourRow][neighbourCol].type === CELL_TYPE.MINE) {
+          count++;
         }
       }
-      field[r][c].neighborMines = count;
+      field[row][col].neighborMines = count;
     }
   }
 }
@@ -74,13 +82,11 @@ function openCell(row, col) {
   cell.state = CELL_STATE.OPENED;
 
   if (cell.neighborMines === 0) {
-    for (let i = -1; i <= 1; i++) {
-      for (let j = -1; j <= 1; j++) {
-        const nr = row + i;
-        const nc = col + j;
-        if (isValidCell(nr, nc)) {
-          openCell(nr, nc);
-        }
+    for (const [directionalRow, directionalCol] of DIRECTIONS) {
+      const neighbourRow = row + directionalRow;
+      const neighbourCol = col + directionalCol;
+      if (isValidCell(neighbourRow, neighbourCol)) {
+        openCell(neighbourRow, neighbourCol);
       }
     }
   }
@@ -98,21 +104,19 @@ function startTimer() {
   gameState.gameTime = 0;
   gameState.timerId = setInterval(() => {
     gameState.gameTime++;
-    console.log(`Час гри: ${gameState.gameTime} сек.`);
   }, 1000);
 }
 
 function endGame(status) {
   gameState.status = status;
   clearInterval(gameState.timerId);
-  console.log(`Гра завершена: ${status === GAME_STATUS.WIN ? 'ПЕРЕМОГА!' : 'ПОРАЗКА!'}`);
 }
 
 function checkWin() {
-  for (let r = 0; r < gameState.rows; r++) {
-    for (let c = 0; c < gameState.cols; c++) {
-      const cell = gameState.field[r][c];
-      if (cell.type === CELL_TYPE.EMPTY && cell.state === CELL_STATE.CLOSED) {
+  for (let row = 0; row < gameState.rows; row++) {
+    for (let col = 0; col < gameState.cols; col++) {
+      const cell = gameState.field[row][col];
+      if (cell.type === CELL_TYPE.EMPTY && cell.state !== CELL_STATE.OPENED) {
         return; 
       }
     }
