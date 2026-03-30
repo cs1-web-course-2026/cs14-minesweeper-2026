@@ -372,7 +372,7 @@ function floodOpen(row, col) {
 
   if (cell.neighborMines !== 0) return;
 
-  forEachNeighbour(row, col, (r, c) => floodOpen(r, c));
+  forEachNeighbour(row, col, (neighbourRow, neighbourCol) => floodOpen(neighbourRow, neighbourCol));
 }
 
 function ensureSafeFirstMove(row, col) {
