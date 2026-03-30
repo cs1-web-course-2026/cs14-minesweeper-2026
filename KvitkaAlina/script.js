@@ -169,40 +169,41 @@ function generateField(excludedRow = null, excludedCol = null) {
 }
 
 function clearCellPresentation(element) {
-  el.className = "cell";
-  el.textContent = "";
+  element.className = "cell";
+  element.textContent = "";
 }
 
 function renderClosedCell(element) {
-  el.classList.add("cell--closed");
-  el.setAttribute("aria-label", "Закрита клітинка");
+  element.classList.add("cell--closed");
+  element.setAttribute("aria-label", "Закрита клітинка");
 }
 
 function renderFlaggedCell(element) {
-  el.classList.add("cell--closed", "cell--flag");
-  el.setAttribute("aria-label", "Клітинка з прапорцем");
+  element.classList.add("cell--closed", "cell--flag");
+  element.setAttribute("aria-label", "Клітинка з прапорцем");
 }
 
 function renderMineCell(element, cell) {
-  el.classList.add("cell--open");
+  element.classList.add("cell--open");
 
   if (cell.isExploded) {
-    el.classList.add("cell--mine-hit");
-    el.setAttribute("aria-label", "Міна, яку підірвав користувач");
+    element.classList.add("cell--mine-hit");
+    element.setAttribute("aria-label", "Міна, яку підірвав користувач");
+    
     return;
   }
 
-  el.classList.add("cell--mine");
-  el.setAttribute("aria-label", "Відкрита міна");
+  element.classList.add("cell--mine");
+  element.setAttribute("aria-label", "Відкрита міна");
 }
 
 function renderOpenedSafeCell(element, cell) {
-  el.classList.add("cell--open");
+  element.classList.add("cell--open");
 
   if (cell.neighborMines > 0) {
-    el.classList.add(`cell--number-${cell.neighborMines}`);
-    el.textContent = String(cell.neighborMines);
-    el.setAttribute(
+    element.classList.add(`cell--number-${cell.neighborMines}`);
+    element.textContent = String(cell.neighborMines);
+    element.setAttribute(
       "aria-label",
       `Відкрита клітинка, ${cell.neighborMines} мін поруч`
     );
@@ -210,22 +211,24 @@ function renderOpenedSafeCell(element, cell) {
     return;
   }
 
-  el.setAttribute("aria-label", "Відкрита порожня клітинка");
+  element.setAttribute("aria-label", "Відкрита порожня клітинка");
 }
 
 function renderCell(row, col) {
   const cell = getCellData(row, col);
   const el = getCellElement(row, col);
 
-  clearCellPresentationelement;
+  clearCellPresentation(el);
 
   if (cell.state === CELL_STATE.CLOSED) {
-    renderClosedCellelement;
+    renderClosedCell(el);
+    
     return;
   }
 
   if (cell.state === CELL_STATE.FLAGGED) {
-    renderFlaggedCellelement;
+    renderFlaggedCell(el);
+    
     return;
   }
 
@@ -283,6 +286,7 @@ function startTimer() {
   gameState.timerId = setInterval(() => {
     if (!isGameActive()) {
       stopTimer();
+      
       return;
     }
 
@@ -401,6 +405,7 @@ function openCell(row, col) {
   if (actual.type === CELL_TYPE.MINE) {
     actual.state = CELL_STATE.OPENED;
     handleLose(row, col);
+    
     return;
   }
 
@@ -433,9 +438,9 @@ function toggleFlag(row, col) {
 
 function handleClick(e) {
   const el = e.target.closest(".cell");
-  if (!el || !boardElement.containselement) return;
+  if (!el || !boardElement.contains(el)) return;
 
-  const index = cellElements.indexOfelement;
+  const index = cellElements.indexOf(el);
   const row = Math.floor(index / GAME_CONFIG.COLS);
   const col = index % GAME_CONFIG.COLS;
 
@@ -444,11 +449,11 @@ function handleClick(e) {
 
 function handleRightClick(e) {
   const el = e.target.closest(".cell");
-  if (!el || !boardElement.containselement) return;
+  if (!el || !boardElement.contains(el)) return;
 
   e.preventDefault();
 
-  const index = cellElements.indexOfelement;
+  const index = cellElements.indexOf(el);
   const row = Math.floor(index / GAME_CONFIG.COLS);
   const col = index % GAME_CONFIG.COLS;
 
