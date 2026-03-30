@@ -19,6 +19,7 @@ let startTime = 0;
 let timerInterval = null;
 let flaggedCount = 0;
 
+
 function generateField() {
   board = Array(GRID_SIZE).fill().map(() => 
     Array(GRID_SIZE).fill().map(() => ({ 
@@ -53,16 +54,17 @@ function countNeighbourMines(row, col) {
   let count = 0;
   for (const [neighbourRow, neighbourCol] of DIRECTIONS) {
     const neighbourRow = row + neighbourRow;  // rename the direction destructure too
-const neighbourCol = col + neighbourCol;
-if (neighbourRow >= 0 && neighbourRow < GRID_SIZE && neighbourCol >= 0 && neighbourCol < GRID_SIZE) {
-  if (board[neighbourRow][neighbourCol].hasMine) {
-    count++;
+    const neighbourCol = col + neighbourCol;
+    if (neighbourRow >= 0 && neighbourRow < GRID_SIZE && neighbourCol >= 0 && neighbourCol < GRID_SIZE) {
+      if (board[neighbourRow][neighbourCol].hasMine) {
+        count++;
       }
     }
   }
   
   return count;
 }
+
 
 function openCell(row, col) {
   if (gameStatus !== GAME_STATUS.PLAYING) return;
@@ -94,6 +96,7 @@ function openCell(row, col) {
   checkWinCondition();
 }
 
+
 function toggleFlag(row, col) {
   if (gameStatus !== GAME_STATUS.PLAYING) return;
   
@@ -105,13 +108,15 @@ function toggleFlag(row, col) {
       cell.state = CELL_STATE.FLAGGED;
       flaggedCount++;
     }
-  } else if (cell.state === CELL_STATE.FLAGGED) {
+  } 
+  else if (cell.state === CELL_STATE.FLAGGED) {
     cell.state = CELL_STATE.CLOSED;
     flaggedCount--;
   }
   
   updateMineCounter();
 }
+
 
 function checkWinCondition() {
   let closedCount = 0;
@@ -129,6 +134,7 @@ function checkWinCondition() {
   }
 }
 
+
 function revealAllMines() {
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let col = 0; col < GRID_SIZE; col++) {
@@ -139,6 +145,7 @@ function revealAllMines() {
   }
 }
 
+
 function startTimer() {
   startTime = Date.now();
   timerInterval = setInterval(() => {
@@ -147,20 +154,24 @@ function startTimer() {
   }, 1000);
 }
 
+
 function stopTimer() {
   clearInterval(timerInterval);
 }
+
 
 function updateTimer(seconds) {
   const timerElement = document.getElementById('timer-counter');
   timerElement.textContent = String(seconds).padStart(3, '0');
 }
 
+
 function updateMineCounter() {
   const minesLeft = MINE_COUNT - flaggedCount;
   const counterElement = document.getElementById('mine-counter');
   counterElement.textContent = String(Math.max(0, minesLeft)).padStart(3, '0');
 }
+
 
 function resetGame() {
   board = [];
@@ -172,6 +183,7 @@ function resetGame() {
   updateMineCounter();
   renderBoard();
 }
+
 
 function renderBoard() {
   const field = document.querySelector('.field');
