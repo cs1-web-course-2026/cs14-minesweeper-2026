@@ -2,7 +2,16 @@ const CELL_STATE = { CLOSED: 'closed', OPEN: 'open', FLAGGED: 'flagged' };
 const GAME_STATUS = { PLAYING: 'playing', WON: 'won', LOST: 'lost' };
 const GRID_SIZE = 9;
 const MINE_COUNT = 10;
-const DIRECTIONS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+const DIRECTIONS = [
+  [-1, -1],
+  [-1,  0],
+  [-1,  1],
+  [ 0, -1],
+  [ 0,  1],
+  [ 1, -1],
+  [ 1,  0],
+  [ 1,  1],
+];
 
 let board = [];
 let gameStatus = '';
@@ -39,17 +48,19 @@ function generateField() {
   }
 }
 
+
 function countNeighbourMines(row, col) {
   let count = 0;
   for (const [neighbourRow, neighbourCol] of DIRECTIONS) {
-    const newRow = row + neighbourRow;
-    const newCol = col + neighbourCol;
-    if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
-      if (board[newRow][newCol].hasMine) {
-        count++;
+    const neighbourRow = row + neighbourRow;  // rename the direction destructure too
+const neighbourCol = col + neighbourCol;
+if (neighbourRow >= 0 && neighbourRow < GRID_SIZE && neighbourCol >= 0 && neighbourCol < GRID_SIZE) {
+  if (board[neighbourRow][neighbourCol].hasMine) {
+    count++;
       }
     }
   }
+  
   return count;
 }
 
@@ -106,7 +117,7 @@ function checkWinCondition() {
   let closedCount = 0;
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let col = 0; col < GRID_SIZE; col++) {
-      if (board[row][col].state === CELL_STATE.CLOSED && !board[row][col].hasMine) {
+      if (!board[row][col].hasMine && board[row][col].state !== CELL_STATE.OPEN) {
         closedCount++;
       }
     }
@@ -133,7 +144,7 @@ function startTimer() {
   timerInterval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     updateTimer(elapsed);
-  }, 100);
+  }, 1000);
 }
 
 function stopTimer() {
@@ -141,13 +152,13 @@ function stopTimer() {
 }
 
 function updateTimer(seconds) {
-  const timerElement = document.querySelectorAll('.counter')[1];
+  const timerElement = document.getElementById('timer-counter');
   timerElement.textContent = String(seconds).padStart(3, '0');
 }
 
 function updateMineCounter() {
   const minesLeft = MINE_COUNT - flaggedCount;
-  const counterElement = document.querySelectorAll('.counter')[0];
+  const counterElement = document.getElementById('mine-counter');
   counterElement.textContent = String(Math.max(0, minesLeft)).padStart(3, '0');
 }
 
