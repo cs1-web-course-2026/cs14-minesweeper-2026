@@ -21,7 +21,9 @@ const DIRECTIONS = [
   [ 1, -1], [ 1, 0], [ 1, 1],
 ];
 
-
+const timerElement = document.getElementById('timer');
+const flagsElement = document.getElementById('flags');
+const gameMessageElement = document.getElementById('game-message');
 
 const gameState = {
   rows: 10,
@@ -34,7 +36,6 @@ const gameState = {
   field: [],
 };
 
-
 function createCell() {
   return {
     type: CELL_CONTENT.EMPTY,
@@ -42,8 +43,6 @@ function createCell() {
     neighborMines: 0,
   };
 }
-
-
 
 function generateField(rows, cols, minesCount) {
   const field = Array.from({ length: rows }, () =>
@@ -66,8 +65,6 @@ function generateField(rows, cols, minesCount) {
   return field;
 }
 
-
-
 function countNeighborMines(field, rows, cols) {
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
@@ -76,16 +73,17 @@ function countNeighborMines(field, rows, cols) {
 
       let mineCount = 0;
 
-      for (const [dRow, dCol] of DIRECTIONS) {
-        const nRow = row + dRow;
-        const nCol = col + dCol;
+      
+      for (const [directionalRow, directionalCol] of DIRECTIONS) {
+        const neighbourRow = row + directionalRow;
+        const neighbourCol = col + directionalCol;
 
         if (
-          nRow >= 0 &&
-          nRow < rows &&
-          nCol >= 0 &&
-          nCol < cols &&
-          field[nRow][nCol].type === CELL_CONTENT.MINE
+          neighbourRow >= 0 &&
+          neighbourRow < rows &&
+          neighbourCol >= 0 &&
+          neighbourCol < cols &&
+          field[neighbourRow][neighbourCol].type === CELL_CONTENT.MINE
         ) {
           mineCount++;
         }
@@ -95,8 +93,6 @@ function countNeighborMines(field, rows, cols) {
     }
   }
 }
-
-
 
 function openCell(row, col) {
   if (gameState.status !== GAME_STATUS.PLAYING) return;
@@ -114,25 +110,23 @@ function openCell(row, col) {
   }
 
   if (cell.neighborMines === 0) {
-    for (const [dRow, dCol] of DIRECTIONS) {
-      const nRow = row + dRow;
-      const nCol = col + dCol;
+    for (const [directionalRow, directionalCol] of DIRECTIONS) {
+      const neighbourRow = row + directionalRow;
+      const neighbourCol = col + directionalCol;
 
       if (
-        nRow >= 0 &&
-        nRow < gameState.rows &&
-        nCol >= 0 &&
-        nCol < gameState.cols
+        neighbourRow >= 0 &&
+        neighbourRow < gameState.rows &&
+        neighbourCol >= 0 &&
+        neighbourCol < gameState.cols
       ) {
-        openCell(nRow, nCol);
+        openCell(neighbourRow, neighbourCol);
       }
     }
   }
 
   checkWin();
 }
-
-
 
 function toggleFlag(row, col) {
   if (gameState.status !== GAME_STATUS.PLAYING) return;
@@ -153,17 +147,15 @@ function toggleFlag(row, col) {
   updateFlagsUI();
 }
 
-
-
 function startTimer() {
   stopTimer();
 
   gameState.gameTime = 0;
-  document.querySelectorAll('.header-item .value')[0].textContent = gameState.gameTime;
+  timerElement.textContent = gameState.gameTime;
 
   gameState.timerId = setInterval(() => {
     gameState.gameTime++;
-    document.querySelectorAll('.header-item .value')[0].textContent = gameState.gameTime;
+    timerElement.textContent = gameState.gameTime;
   }, 1000);
 }
 
@@ -171,18 +163,17 @@ function stopTimer() {
   clearInterval(gameState.timerId);
 }
 
-
-
 function gameOver(win) {
   gameState.status = win ? GAME_STATUS.WON : GAME_STATUS.LOST;
 
   stopTimer();
   revealAll(win);
 
-  alert(win ? 'Ви виграли!' : 'Ви програли!');
+  
+  gameMessageElement.textContent = win
+    ? 'Ви виграли! 🎉'
+    : 'Ви програли! 💣';
 }
-
-
 
 function checkWin() {
   let closedOrFlagged = 0;
@@ -199,8 +190,6 @@ function checkWin() {
     gameOver(true);
   }
 }
-
-
 
 function revealAll(win = false) {
   for (let row = 0; row < gameState.rows; row++) {
@@ -220,8 +209,6 @@ function revealAll(win = false) {
   }
 }
 
-
-
 function updateCellUI(row, col) {
   const index = row * gameState.cols + col;
   const cellButton = document.querySelectorAll('.game-board .cell')[index];
@@ -234,23 +221,28 @@ function updateCellUI(row, col) {
 
     if (cell.type === CELL_CONTENT.MINE) {
       cellButton.textContent = '💣';
+      cellButton.setAttribute('aria-label', 'Міна');
     } else if (cell.neighborMines > 0) {
       cellButton.textContent = cell.neighborMines;
+      cellButton.setAttribute('aria-label', `Клітинка, ${cell.neighborMines} мін поруч`);
+    } else {
+      cellButton.setAttribute('aria-label', 'Порожня клітинка');
     }
 
   } else if (cell.state === CELL_STATE.FLAGGED) {
     cellButton.classList.add('flagged');
     cellButton.textContent = '🚩';
+    cellButton.setAttribute('aria-label', 'Позначена клітинка');
+
   } else {
     cellButton.textContent = '';
+    cellButton.setAttribute('aria-label', 'Закрита клітинка');
   }
 }
 
 function updateFlagsUI() {
-  document.querySelectorAll('.header-item .value')[1].textContent = gameState.flagsCount;
+  flagsElement.textContent = gameState.flagsCount;
 }
-
-
 
 function initGame() {
   gameState.field = generateField(
@@ -272,7 +264,14 @@ function initGame() {
     for (let col = 0; col < gameState.cols; col++) {
 
       const cellButton = document.createElement('button');
+
+      cellButton.type = 'button';
       cellButton.className = 'cell';
+      cellButton.setAttribute('role', 'gridcell');
+      cellButton.setAttribute(
+        'aria-label',
+        `Рядок ${row + 1}, стовпець ${col + 1}, закрита клітинка`
+      );
 
       board.appendChild(cellButton);
 
@@ -286,7 +285,6 @@ function initGame() {
   }
 }
 
-
-
 document.querySelector('.start-button').onclick = initGame;
+
 initGame();
