@@ -102,7 +102,7 @@ function openCell(row, col) {
   if (cell.state === CELL_STATE.OPEN || cell.state === CELL_STATE.FLAGGED) return;
 
   cell.state = CELL_STATE.OPEN;
-  gameState.openedCellsCount++; // ✅ ДОДАНО
+  gameState.openedCellsCount++; 
   updateCellUI(row, col);
 
   if (cell.type === CELL_CONTENT.MINE) {
