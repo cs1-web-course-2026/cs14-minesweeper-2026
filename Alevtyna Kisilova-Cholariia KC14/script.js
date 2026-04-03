@@ -182,7 +182,6 @@ function endGame(status) {
   clearInterval(gameState.timerId);
   
   if (status === GAME_STATUS.LOSE) {
-    // Відкриваємо всі інші міни
     gameState.field.forEach((r, rowIdx) => r.forEach((c, colIdx) => {
       if (c.type === CELL_TYPE.MINE) {
         c.state = CELL_STATE.OPENED;
