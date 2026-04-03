@@ -20,9 +20,9 @@ const gameState = {
 
 
 const fieldElement = document.getElementById('game-field');
-const timerElement = document.getElementById('timer');
-const flagsElement = document.getElementById('flags-count');
-const restartButton = document.getElementById('restart-btn');
+const timerElement = document.querySelector('.timer');
+const flagsElement = document.querySelector('.flags-count');
+const restartButton = document.querySelector('.btn-start');
 
 
 function isValidCell(row, col) {
@@ -77,12 +77,9 @@ function countNeighbourMines(field) {
 
 function renderField() {
   fieldElement.innerHTML = '';
-  fieldElement.style.gridTemplateColumns = `repeat(${gameState.cols}, 40px)`;
-
   for (let row = 0; row < gameState.rows; row++) {
     for (let col = 0; col < gameState.cols; col++) {
       const cellDiv = document.createElement('div');
-      cellDiv.classList.add('cell');
       cellDiv.dataset.row = row;
       cellDiv.dataset.col = col;
 
@@ -103,21 +100,28 @@ function updateCellUI(row, col) {
   const cell = gameState.field[row][col];
   const cellDiv = fieldElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
   
-  cellDiv.className = 'cell';
-  cellDiv.textContent = '';
+  // Використовуємо ТВОЇ класи з CSS
+  cellDiv.className = 'cell'; 
 
-  if (cell.state === CELL_STATE.OPENED) {
-    cellDiv.classList.add('opened');
-    if (cell.type === CELL_TYPE.MINE) {
-      cellDiv.classList.add('mine');
-      cellDiv.textContent = '💣';
-    } else if (cell.neighborMines > 0) {
-      cellDiv.textContent = cell.neighborMines;
-      cellDiv.dataset.count = cell.neighborMines; 
-    }
+  if (cell.state === CELL_STATE.CLOSED) {
+    cellDiv.classList.add('closed');
+    cellDiv.textContent = '';
   } else if (cell.state === CELL_STATE.FLAGGED) {
     cellDiv.classList.add('flagged');
-    cellDiv.textContent = '🚩';
+    cellDiv.textContent = ''; // Прапорець додається через CSS ::after
+  } else if (cell.state === CELL_STATE.OPENED) {
+    if (cell.type === CELL_TYPE.MINE) {
+      cellDiv.classList.add('mine');
+      if (gameState.status === GAME_STATUS.LOSE && cell.exploded) {
+          cellDiv.classList.add('exploded');
+      }
+    } else {
+      cellDiv.classList.add('open');
+      if (cell.neighborMines > 0) {
+        cellDiv.textContent = cell.neighborMines;
+        cellDiv.setAttribute('data-number', cell.neighborMines); // Для кольорів цифр
+      }
+    }
   }
 }
 
@@ -128,12 +132,15 @@ function openCell(row, col) {
   if (cell.state !== CELL_STATE.CLOSED || gameState.status !== GAME_STATUS.PROCESS) return;
 
   cell.state = CELL_STATE.OPENED;
-  updateCellUI(row, col);
 
   if (cell.type === CELL_TYPE.MINE) {
+    cell.exploded = true;
+    updateCellUI(row, col);
     endGame(GAME_STATUS.LOSE);
     return;
   }
+
+  updateCellUI(row, col);
 
   if (cell.neighborMines === 0) {
     for (const [dr, dc] of DIRECTIONS) {
@@ -150,8 +157,8 @@ function toggleFlag(row, col) {
 
   cell.state = cell.state === CELL_STATE.FLAGGED ? CELL_STATE.CLOSED : CELL_STATE.FLAGGED;
   
-  const totalFlags = gameState.field.flat().filter(c => c.state === CELL_STATE.FLAGGED).length;
-  flagsElement.textContent = gameState.minesCount - totalFlags;
+  const currentFlags = gameState.field.flat().filter(c => c.state === CELL_STATE.FLAGGED).length;
+  flagsElement.textContent = `${gameState.minesCount - currentFlags}🚩`;
   
   updateCellUI(row, col);
 }
@@ -173,16 +180,15 @@ function startTimer() {
 function endGame(status) {
   gameState.status = status;
   clearInterval(gameState.timerId);
+  
   if (status === GAME_STATUS.LOSE) {
-    alert('Гра завершена: Ви підірвалися! 💥');
-    gameState.field.forEach((r, row) => r.forEach((c, col) => {
+    // Відкриваємо всі інші міни
+    gameState.field.forEach((r, rowIdx) => r.forEach((c, colIdx) => {
       if (c.type === CELL_TYPE.MINE) {
         c.state = CELL_STATE.OPENED;
-        updateCellUI(row, col);
+        updateCellUI(rowIdx, colIdx);
       }
     }));
-  } else {
-    alert('Вітаємо! Ви очистили поле! 🎉');
   }
 }
 
@@ -199,7 +205,7 @@ function initGame() {
   gameState.status = GAME_STATUS.PROCESS;
   gameState.field = generateField(gameState.rows, gameState.cols, gameState.minesCount);
   countNeighbourMines(gameState.field);
-  flagsElement.textContent = gameState.minesCount;
+  flagsElement.textContent = `${gameState.minesCount}🚩`;
   startTimer();
   renderField();
 }
