@@ -10,133 +10,20 @@
     <main class="game">
         <header class="game-header">
             <div class="status">
-                <div class="timer" aria-live="polite">00:00</div>
+                <div id="timer" class="timer" aria-live="polite">00:00</div>
                 <div class="flags">
                     <span class="flag-icon" aria-hidden="true"></span> 
-                    <span class="flags-count">6🚩</span>
+                    <span id="flags-count" class="flags-count">0</span>
                 </div>
             </div>
-            <button class="btn-start" type="button">Нова гра</button>
+            <button id="restart-btn" class="btn-start" type="button">Нова гра</button>
         </header>
 
-        <section class="board" role="grid" aria-label="Minesweeper board" style="--cols:10">
-          
-          <div class="cell closed"></div>
-          <div class="cell flagged wrong"></div> 
-          <div class="cell open" data-number="1">1</div>
-          <div class="cell closed"></div>
-          <div class="cell flagged"></div>
-          <div class="cell mine exploded"></div> 
-          <div class="cell open" data-number="3">3</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="2">2</div>
-          <div class="cell open" data-number="3">3</div>
-          <div class="cell closed"></div>
-          <div class="cell mine"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="1">1</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="4">4</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="1">1</div>
-          <div class="cell closed"></div>
-
-          <div class="cell flagged"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="2">2</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="1">1</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell flagged"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="2">2</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="3">3</div>
-          <div class="cell closed"></div>
-          <div class="cell flagged"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="1">1</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="2">2</div>
-          <div class="cell closed"></div>
-          <div class="cell mine"></div>
-          <div class="cell closed"></div>
-          <div class="cell flagged"></div>
-          <div class="cell closed"></div>
-
-          <div class="cell open" data-number="1">1</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="3">3</div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-
-          <div class="cell mine"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell open" data-number="2">2</div>
-          <div class="cell closed"></div>
-
-          <div class="cell mine"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-          <div class="cell closed"></div>
-        </section>
+        <section id="game-field" class="board" role="grid" aria-label="Minesweeper board" style="--cols:10">
+            </section>
 
     </main>
+
     <script src="script.js"></script>
-    <div id="game-field"></div>
-    <span id="timer">00:00</span>
-    <span id="flags-count">0</span>
-    <button id="restart-btn">Нова гра</button>
 </body>
 </html>
