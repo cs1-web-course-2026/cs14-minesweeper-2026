@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Minesweeper — UI Demo</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="app">
+    <header class="game-header">
+      <div class="left">
+        <div class="timer" id="timer">00:00</div>
+      </div>
+      <div class="center">
+        <div style="display:flex; gap:8px; align-items:center">
+          <button id="reset" class="reset">😊</button>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+        </div>
+      </div>
+      <div class="right">
+        <div class="flags">🚩<span id="flags-left">0</span></div>
+      </div>
+    </header>
+
+    <section class="board-wrapper">
+      <div class="board" id="board" style="--cols:9; --rows:9" aria-label="Minesweeper board"></div>
+    </section>
+
+    <!-- Fullscreen Game Over overlay -->
+    <div id="gameover" class="overlay hidden" role="dialog" aria-modal="true">
+      <div class="overlay-panel">
+        <h1 class="overlay-title">Game Over</h1>
+        <p class="overlay-sub">💥Ви підірвали міну💥</p>
+        <button id="overlay-reset" class="reset large"> 🔄️</button>
+      </div>
+    </div>
+    <footer class="note">Натисніть лівою кнопкою — відкрити; правою — поставити прапорець.</footer>
+  </main>
+
+  <!-- Small editable corner note (user will fill) -->
+  <div id="corner-note" class="corner-note" aria-label="Corner note">by Repka Maxim 6️⃣7️⃣</div>
+
+  <script>
+    // Налаштування гри (візуальна демонстрація)
+    const COLS = 9, ROWS = 9, MINES = 10;
+    const boardEl = document.getElementById('board');
+    const timerEl = document.getElementById('timer');
+    const flagsLeftEl = document.getElementById('flags-left');
+    const flagsContainer = document.querySelector('.flags');
+    const resetBtn = document.getElementById('reset');
+    const themeToggleBtn = document.getElementById('theme-toggle');
+
+    let cells = [];
+    let mineSet = new Set();
+    let openedCount = 0;
+    let flaggedCount = 0;
+    let timer = null, seconds = 0, started = false;
+
+    function startTimer(){
+      if (started) return;
+      started = true;
+      seconds = 0;
+      timerEl.textContent = '00:00';
+      timer = setInterval(()=>{
+        seconds++;
+        const m = String(Math.floor(seconds/60)).padStart(2,'0');
+        const s = String(seconds%60).padStart(2,'0');
+        timerEl.textContent = `${m}:${s}`;
+      }, 1000);
+    }
+    function stopTimer(){ clearInterval(timer); started=false; }
+
+    function setFlagsLeft(){ flagsLeftEl.textContent = Math.max(0, MINES - flaggedCount); }
+
+    function buildBoard(){
+      boardEl.style.setProperty('--cols', COLS);
+      boardEl.style.setProperty('--rows', ROWS);
+      boardEl.innerHTML = '';
+      cells = [];
+      mineSet.clear();
+      openedCount = 0; flaggedCount = 0; setFlagsLeft(); stopTimer(); timerEl.textContent='00:00';
+
+      // place mines
+      while(mineSet.size < MINES){
+        const idx = Math.floor(Math.random()*COLS*ROWS);
+        mineSet.add(idx);
+      }
+
+      for (let r=0;r<ROWS;r++){
+        for (let c=0;c<COLS;c++){
+          const i = r*COLS + c;
+          const cell = document.createElement('button');
+          cell.className = 'cell closed';
+          cell.dataset.index = i;
+          cell.setAttribute('aria-label', 'closed cell');
+          cell.addEventListener('click', onLeftClick);
+          cell.addEventListener('contextmenu', onRightClick);
+          boardEl.appendChild(cell);
+          cells.push(cell);
+        }
+      }
+    }
+
+    function onLeftClick(e){
+      const el = e.currentTarget;
+      const idx = Number(el.dataset.index);
+      if (!started) startTimer();
+      if (el.classList.contains('flagged') || el.classList.contains('open')) return;
+      if (mineSet.has(idx)){
+        // exploded
+        el.classList.remove('closed');
+        el.classList.add('open','mine','exploded');
+        el.textContent = '💣';
+        revealAllMines(idx);
+        stopTimer();
+        resetBtn.textContent = '😵';
+        return;
+      }
+      openCell(idx);
+      if (openedCount === COLS*ROWS - MINES){
+        stopTimer(); resetBtn.textContent = '😎';
+      }
+    }
+
+    function onRightClick(e){
+      e.preventDefault();
+      const el = e.currentTarget;
+      if (el.classList.contains('open')) return;
+      if (!started) startTimer();
+      if (el.classList.contains('flagged')){
+        el.classList.remove('flagged'); el.textContent = '';
+        flaggedCount--; setFlagsLeft();
+      } else {
+        // Prevent placing more flags than MINES
+        if (flaggedCount >= MINES){
+          // brief visual feedback on flags counter
+          if (flagsContainer){
+            flagsContainer.classList.add('flash');
+            setTimeout(()=> flagsContainer.classList.remove('flash'), 600);
+          }
+          return;
+        }
+        el.classList.add('flagged'); el.textContent = '🚩';
+        flaggedCount++; setFlagsLeft();
+      }
+    }
+
+    function revealAllMines(explodedIdx){
+      mineSet.forEach(i=>{
+        const cell = cells[i];
+        if (!cell) return;
+        if (i === explodedIdx) return; // already shown
+        cell.classList.remove('closed'); cell.classList.add('open','mine');
+        cell.textContent = '💣';
+      });
+      // show game over overlay
+      showGameOver();
+    }
+
+    function neighborsCount(i){
+      const r = Math.floor(i / COLS), c = i % COLS;
+      let cnt = 0;
+      for (let dr=-1; dr<=1; dr++) for (let dc=-1; dc<=1; dc++){
+        if (dr===0 && dc===0) continue;
+        const rr = r+dr, cc = c+dc;
+        if (rr<0||rr>=ROWS||cc<0||cc>=COLS) continue;
+        if (mineSet.has(rr*COLS+cc)) cnt++;
+      }
+      return cnt;
+    }
+
+    function openCell(i){
+      const el = cells[i];
+      if (!el || el.classList.contains('open')) return;
+      el.classList.remove('closed'); el.classList.add('open');
+      openedCount++;
+      const cnt = neighborsCount(i);
+      if (cnt>0) el.textContent = cnt;
+      else {
+        // flood fill
+        const r = Math.floor(i/COLS), c = i%COLS;
+        for (let dr=-1; dr<=1; dr++) for (let dc=-1; dc<=1; dc++){
+          if (dr===0 && dc===0) continue;
+          const rr=r+dr, cc=c+dc;
+          if (rr<0||rr>=ROWS||cc<0||cc>=COLS) continue;
+          const ni = rr*COLS+cc;
+          if (!cells[ni].classList.contains('open') && !mineSet.has(ni)) openCell(ni);
+        }
+      }
+    }
+
+    resetBtn.addEventListener('click', ()=>{ resetBtn.textContent='😊'; buildBoard(); });
+    // overlay controls
+    const gameoverEl = document.getElementById('gameover');
+    const overlayReset = document.getElementById('overlay-reset');
+    function showGameOver(){
+      if (!gameoverEl) return;
+      gameoverEl.classList.remove('hidden');
+      stopTimer();
+      resetBtn.textContent = '😵';
+    }
+    function hideGameOver(){ if (gameoverEl) gameoverEl.classList.add('hidden'); }
+    overlayReset && overlayReset.addEventListener('click', ()=>{ hideGameOver(); resetBtn.textContent='😊'; buildBoard(); });
+    // hide overlay when user clicks main reset
+    resetBtn.addEventListener('click', ()=>{ hideGameOver(); });
+
+    // Theme toggle: persist choice in localStorage
+    function applyTheme(name){
+      if (name === 'dark') document.body.classList.add('dark-theme');
+      else document.body.classList.remove('dark-theme');
+      if (themeToggleBtn) themeToggleBtn.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+      try{ localStorage.setItem('theme', name); }catch(e){}
+    }
+    // initial theme
+    const savedTheme = (function(){ try { return localStorage.getItem('theme') } catch(e){ return null } })() || 'light';
+    applyTheme(savedTheme);
+    themeToggleBtn && themeToggleBtn.addEventListener('click', ()=>{ applyTheme(document.body.classList.contains('dark-theme') ? 'light' : 'dark'); });
+
+    // init
+    buildBoard();
+  </script>
+</body>
+</html>
