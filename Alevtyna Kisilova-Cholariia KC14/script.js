@@ -100,7 +100,6 @@ function updateCellUI(row, col) {
   const cell = gameState.field[row][col];
   const cellDiv = fieldElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
   
-  // Використовуємо ТВОЇ класи з CSS
   cellDiv.className = 'cell'; 
 
   if (cell.state === CELL_STATE.CLOSED) {
@@ -108,7 +107,7 @@ function updateCellUI(row, col) {
     cellDiv.textContent = '';
   } else if (cell.state === CELL_STATE.FLAGGED) {
     cellDiv.classList.add('flagged');
-    cellDiv.textContent = ''; // Прапорець додається через CSS ::after
+    cellDiv.textContent = ''; 
   } else if (cell.state === CELL_STATE.OPENED) {
     if (cell.type === CELL_TYPE.MINE) {
       cellDiv.classList.add('mine');
@@ -119,7 +118,7 @@ function updateCellUI(row, col) {
       cellDiv.classList.add('open');
       if (cell.neighborMines > 0) {
         cellDiv.textContent = cell.neighborMines;
-        cellDiv.setAttribute('data-number', cell.neighborMines); // Для кольорів цифр
+        cellDiv.setAttribute('data-number', cell.neighborMines); 
       }
     }
   }
