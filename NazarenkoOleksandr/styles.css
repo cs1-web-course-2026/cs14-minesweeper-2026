@@ -1,0 +1,137 @@
+:root {
+    --bg-classic: #c0c0c0;
+    --border-light: #ffffff;
+    --border-dark: #808080;
+    --cell-size: 30px;
+}
+
+body {
+    background-color: #439191;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.game-window {
+    background-color: var(--bg-classic);
+    padding: 10px;
+
+    border-top: 3px solid var(--border-light);
+    border-left: 3px solid var(--border-light);
+    border-bottom: 3px solid var(--border-dark);
+    border-right: 3px solid var(--border-dark);
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px;
+    margin-bottom: 10px;
+    border-top: 2px solid var(--border-dark);
+    border-left: 2px solid var(--border-dark);
+    border-bottom: 2px solid var(--border-light);
+    border-right: 2px solid var(--border-light);
+}
+
+.digital-display {
+    background-color: #000;
+    color: #e04e4e;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 2px 4px;
+    line-height: 1;
+    border-top: 2px solid var(--border-dark);
+    border-left: 2px solid var(--border-dark);
+    border-bottom: 2px solid var(--border-light);
+    border-right: 2px solid var(--border-light);
+}
+
+.smiley-btn:active {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    background-color: var(--bg-classic);
+    border-top: 2px solid var(--border-light);
+    border-left: 2px solid var(--border-light);
+    border-bottom: 2px solid var(--border-dark);
+    border-right: 2px solid var(--border-dark);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.smiley-btn:active {
+    border-top: 2px solid var(--border-dark);
+    border-left: 2px solid var(--border-dark);
+    border-bottom: 2px solid var(--border-light);
+    border-right: 2px solid var(--border-light);
+}
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(9, var(--cell-size));
+    grid-template-rows: repeat(9, var(--cell-size));
+    border-top: 3px solid var(--border-dark);
+    border-left: 3px solid var(--border-dark);
+    border-bottom: 3px solid var(--border-light);
+    border-right: 3px solid var(--border-light);
+    background-color: var(--border-dark);
+    gap: 1px;
+}
+
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: var(--bg-classic);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+    font-size: 20px;
+    box-sizing: border-box;
+    cursor: default;
+    user-select: none;
+}
+
+.cell:not(.opened) {
+    border-top: 3px solid var(--border-light);
+    border-left: 3px solid var(--border-light);
+    border-bottom: 3px solid var(--border-dark);
+    border-right: 3px solid var(--border-dark);
+}
+
+.cell.opened {
+    border: none;
+}
+
+
+.cell.n1 { color: #4e4ec9; }
+.cell.n2 { color: #4ead4e; }
+.cell.n3 { color: #e04e4e; }
+
+.cell.mine.exploded {
+    background-color: #e04e4e;
+}
+
+.cell.flagged-wrong {
+    position: relative;
+}
+.cell.flagged-wrong::after {
+    content: "❌";
+    position: absolute;
+    font-size: 26px;
+    color: #e04e4e;
+}
+
+@media (max-width: 400px) {
+    :root {
+        --cell-size: 32px;
+    }
+}
