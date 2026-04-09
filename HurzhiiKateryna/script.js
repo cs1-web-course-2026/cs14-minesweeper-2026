@@ -205,28 +205,36 @@ function revealAll(win = false) {
 
 function updateCellUI(row, col) {
   const index = row * gameState.cols + col;
-  const cellButton = document.querySelectorAll('.game-board .cell')[index];
+  const cellButton = document.querySelectorAll('#gameBoard .cell')[index];
   const cell = gameState.field[row][col];
 
   cellButton.className = 'cell';
 
+  let ariaLabel = `Рядок ${row + 1}, стовпець ${col + 1}, закрита клітинка`;
+
   if (cell.state === CELL_STATE.OPEN) {
     cellButton.classList.add('revealed');
+    ariaLabel = `Рядок ${row + 1}, стовпець ${col + 1}, відкрита клітинка`;
 
     if (cell.type === CELL_CONTENT.MINE) {
       cellButton.textContent = '💣';
+      ariaLabel += ', міна';
     } else if (cell.neighborMines > 0) {
       cellButton.textContent = cell.neighborMines;
+      ariaLabel += `, ${cell.neighborMines} суміжних мін`;
     } else {
       cellButton.textContent = '';
+      ariaLabel += ', без суміжних мін';
     }
-
   } else if (cell.state === CELL_STATE.FLAGGED) {
     cellButton.classList.add('flagged');
     cellButton.textContent = '🚩';
+    ariaLabel = `Рядок ${row + 1}, стовпець ${col + 1}, позначена як прапорець`;
   } else {
     cellButton.textContent = '';
   }
+
+  cellButton.setAttribute('aria-label', ariaLabel);
 }
 
 function updateFlagsUI() {
@@ -256,15 +264,20 @@ function initGame() {
       const cellButton = document.createElement('button');
       cellButton.type = 'button';
       cellButton.className = 'cell';
+      cellButton.setAttribute('role', 'gridcell');
+      cellButton.setAttribute(
+        'aria-label',
+        `Рядок ${row + 1}, стовпець ${col + 1}, закрита клітинка`
+      );
 
       board.appendChild(cellButton);
 
-      cellButton.onclick = () => openCell(row, col);
+      cellButton.addEventListener('click', () => openCell(row, col));
 
-      cellButton.oncontextmenu = (e) => {
-        e.preventDefault();
+      cellButton.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
         toggleFlag(row, col);
-      };
+      });
     }
   }
 }
