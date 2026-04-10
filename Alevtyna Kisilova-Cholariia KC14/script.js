@@ -18,7 +18,6 @@ const gameState = {
   field: []
 };
 
-
 const fieldElement = document.getElementById('game-field');
 const timerElement = document.querySelector('.timer');
 const flagsElement = document.querySelector('.flags-count');
@@ -29,7 +28,6 @@ function isValidCell(row, col) {
   return row >= 0 && row < gameState.rows && col >= 0 && col < gameState.cols;
 }
 
-
 function generateField(rows, cols, minesCount) {
   const field = [];
   for (let row = 0; row < rows; row++) {
@@ -38,7 +36,8 @@ function generateField(rows, cols, minesCount) {
       rowArray.push({
         type: CELL_TYPE.EMPTY,
         neighborMines: 0,
-        state: CELL_STATE.CLOSED
+        state: CELL_STATE.CLOSED,
+        element: null 
       });
     }
     field.push(rowArray);
@@ -55,7 +54,6 @@ function generateField(rows, cols, minesCount) {
   }
   return field;
 }
-
 
 function countNeighbourMines(field) {
   const rows = field.length;
@@ -75,6 +73,11 @@ function countNeighbourMines(field) {
 }
 
 
+function updateFlagsCounterUI() {
+  const currentFlags = gameState.field.flat().filter(c => c.state === CELL_STATE.FLAGGED).length;
+  flagsElement.textContent = `${gameState.minesCount - currentFlags}🚩`;
+}
+
 function renderField() {
   fieldElement.innerHTML = '';
   for (let row = 0; row < gameState.rows; row++) {
@@ -82,6 +85,8 @@ function renderField() {
       const cellDiv = document.createElement('div');
       cellDiv.dataset.row = row;
       cellDiv.dataset.col = col;
+
+      gameState.field[row][col].element = cellDiv;
 
       cellDiv.addEventListener('click', () => openCell(row, col));
       cellDiv.addEventListener('contextmenu', (e) => {
@@ -95,10 +100,9 @@ function renderField() {
   }
 }
 
-
 function updateCellUI(row, col) {
   const cell = gameState.field[row][col];
-  const cellDiv = fieldElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+  const cellDiv = cell.element;
   
   cellDiv.className = 'cell'; 
 
@@ -149,19 +153,15 @@ function openCell(row, col) {
   checkWin();
 }
 
-
 function toggleFlag(row, col) {
   const cell = gameState.field[row][col];
   if (cell.state === CELL_STATE.OPENED || gameState.status !== GAME_STATUS.PROCESS) return;
 
   cell.state = cell.state === CELL_STATE.FLAGGED ? CELL_STATE.CLOSED : CELL_STATE.FLAGGED;
   
-  const currentFlags = gameState.field.flat().filter(c => c.state === CELL_STATE.FLAGGED).length;
-  flagsElement.textContent = `${gameState.minesCount - currentFlags}🚩`;
-  
+  updateFlagsCounterUI();
   updateCellUI(row, col);
 }
-
 
 function startTimer() {
   if (gameState.timerId) clearInterval(gameState.timerId);
@@ -174,7 +174,6 @@ function startTimer() {
     timerElement.textContent = `${mins}:${secs}`;
   }, 1000);
 }
-
 
 function endGame(status) {
   gameState.status = status;
@@ -190,7 +189,6 @@ function endGame(status) {
   }
 }
 
-
 function checkWin() {
   const isWin = gameState.field.every(row => 
     row.every(cell => cell.type === CELL_TYPE.MINE || cell.state === CELL_STATE.OPENED)
@@ -198,16 +196,14 @@ function checkWin() {
   if (isWin) endGame(GAME_STATUS.WIN);
 }
 
-
 function initGame() {
   gameState.status = GAME_STATUS.PROCESS;
   gameState.field = generateField(gameState.rows, gameState.cols, gameState.minesCount);
   countNeighbourMines(gameState.field);
-  flagsElement.textContent = `${gameState.minesCount}🚩`;
+  updateFlagsCounterUI();
   startTimer();
   renderField();
 }
-
 
 restartButton.addEventListener('click', initGame);
 initGame();
