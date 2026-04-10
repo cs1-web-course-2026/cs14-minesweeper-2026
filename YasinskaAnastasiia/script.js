@@ -35,6 +35,12 @@ const gameState = {
   field: []
 };
 
+const boardElement = document.getElementById('game-board');
+const timerElement = document.getElementById('timer-value');
+const flagsElement = document.getElementById('flags-count');
+const restartButton = document.getElementById('restart-btn');
+const statusMessageElement = document.getElementById('game-status-message');
+
 function createCell() {
   return {
     type: CELL_TYPE.EMPTY,
@@ -55,9 +61,9 @@ function isInsideField(row, col) {
 function getNeighbors(row, col) {
   const neighbors = [];
 
-  for (const [directionalRow, directionalCol] of DIRECTIONS) {
-    const neighborRow = row + directionalRow;
-    const neighborCol = col + directionalCol;
+  for (const [directionRow, directionCol] of DIRECTIONS) {
+    const neighborRow = row + directionRow;
+    const neighborCol = col + directionCol;
 
     if (isInsideField(neighborRow, neighborCol)) {
       neighbors.push([neighborRow, neighborCol]);
@@ -123,6 +129,7 @@ function startTimer() {
 
   gameState.timerId = setInterval(() => {
     gameState.gameTime++;
+    updateTimer();
   }, 1000);
 }
 
@@ -148,6 +155,8 @@ function initGame(
 
   gameState.field = generateField(rows, cols, minesCount);
   countNeighbourMines();
+
+  renderGame();
 }
 
 function revealAllMines() {
@@ -205,6 +214,7 @@ function openCell(row, col) {
     gameState.status = GAME_STATUS.LOSE;
     revealAllMines();
     stopTimer();
+    renderGame();
     return;
   }
 
@@ -219,6 +229,7 @@ function openCell(row, col) {
   }
 
   checkWin();
+  renderGame();
 }
 
 function toggleFlag(row, col) {
@@ -245,35 +256,113 @@ function toggleFlag(row, col) {
   } else if (cell.state === CELL_STATE.FLAGGED) {
     cell.state = CELL_STATE.CLOSED;
   }
+
+  renderGame();
 }
 
-function printField() {
-  const result = gameState.field.map((row) => {
-    return row.map((cell) => {
-      if (cell.state === CELL_STATE.CLOSED) {
-        return '■';
-      }
+function getFlagsCount() {
+  let flagsCount = 0;
 
-      if (cell.state === CELL_STATE.FLAGGED) {
-        return '⚑';
+  for (let row = 0; row < gameState.rows; row++) {
+    for (let col = 0; col < gameState.cols; col++) {
+      if (gameState.field[row][col].state === CELL_STATE.FLAGGED) {
+        flagsCount++;
       }
+    }
+  }
 
-      if (cell.type === CELL_TYPE.MINE) {
-        return '*';
+  return flagsCount;
+}
+
+function updateTimer() {
+  timerElement.textContent = String(gameState.gameTime).padStart(3, '0');
+}
+
+function updateFlagsCounter() {
+  const availableFlags = gameState.minesCount - getFlagsCount();
+  flagsElement.textContent = availableFlags;
+}
+
+function updateStatusMessage() {
+  if (gameState.status === GAME_STATUS.WIN) {
+    statusMessageElement.textContent = 'Перемога! Усі безпечні клітинки відкриті.';
+  } else if (gameState.status === GAME_STATUS.LOSE) {
+    statusMessageElement.textContent = 'Поразка! Ви натрапили на міну.';
+  } else {
+    statusMessageElement.textContent = 'Гра триває...';
+  }
+}
+
+function getNumberClass(number) {
+  const numberClasses = {
+    1: 'one',
+    2: 'two',
+    3: 'three',
+    4: 'four',
+    5: 'five',
+    6: 'six',
+    7: 'seven',
+    8: 'eight'
+  };
+
+  return numberClasses[number] || '';
+}
+
+function createCellElement(cell, row, col) {
+  const cellElement = document.createElement('div');
+  cellElement.classList.add('cell');
+
+  if (cell.state === CELL_STATE.OPENED) {
+    cellElement.classList.add('open');
+
+    if (cell.type === CELL_TYPE.MINE) {
+      cellElement.classList.add('mine');
+      if (gameState.status === GAME_STATUS.LOSE) {
+        cellElement.classList.add('hit');
       }
+    } else if (cell.neighborMines > 0) {
+      cellElement.classList.add(getNumberClass(cell.neighborMines));
+    }
+  }
 
-      return cell.neighborMines === 0 ? ' ' : String(cell.neighborMines);
-    }).join(' ');
+  if (cell.state === CELL_STATE.FLAGGED) {
+    cellElement.classList.add('flag');
+  }
+
+  cellElement.addEventListener('click', () => {
+    openCell(row, col);
   });
 
-  console.log(result.join('\n'));
-  console.log('Статус гри:', gameState.status);
-  console.log('Час гри:', gameState.gameTime, 'сек');
+  cellElement.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+    toggleFlag(row, col);
+  });
+
+  return cellElement;
 }
 
-initGame();
+function renderField() {
+  boardElement.innerHTML = '';
+  boardElement.style.gridTemplateColumns = `repeat(${gameState.cols}, 40px)`;
 
-// Приклади перевірки:
-// openCell(0, 0);
-// toggleFlag(1, 1);
-// printField();
+  for (let row = 0; row < gameState.rows; row++) {
+    for (let col = 0; col < gameState.cols; col++) {
+      const cell = gameState.field[row][col];
+      const cellElement = createCellElement(cell, row, col);
+      boardElement.appendChild(cellElement);
+    }
+  }
+}
+
+function renderGame() {
+  renderField();
+  updateTimer();
+  updateFlagsCounter();
+  updateStatusMessage();
+}
+
+restartButton.addEventListener('click', () => {
+  initGame();
+});
+
+initGame();
