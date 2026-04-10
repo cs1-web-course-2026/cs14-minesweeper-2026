@@ -107,6 +107,7 @@ body {
 .flag {
   color: #ff4d6d;
 }
+
 .flag::before {
   content: '';
   position: absolute;
@@ -125,12 +126,7 @@ body {
   width: 0;
   height: 0;
   border-right: 10px solid transparent;
-  border-bottom: 8px solid #ff4d6d;
-}
-
-.green-cell {
-  background: #1e7a1e;
-  border: 1px solid #7b7b7b;
+  border-bottom: 8px solid currentColor;
 }
 
 .mine::after {
