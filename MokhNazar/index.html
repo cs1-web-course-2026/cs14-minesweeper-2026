@@ -7,13 +7,13 @@
         <title>Minesweeper</title>
     </head>
     <body>
-        <div class="game-container">
+        <main class="game-container">
             <header class="game-header">
                 <div class="stat-box" id="flags-counter">
                     010
                 </div>
                 <div>
-                    <button class="reset-button" id="reset-button" aria-label="Restart game">🙂</button>
+                    <button type="button" class="reset-button" id="reset-button" aria-label="Restart game">🙂</button>
                 </div>
                 <div class="stat-box" id="timer">
                     000
@@ -21,7 +21,9 @@
             </header>
             <div class="game-board" id="game-board">
             </div>
-        </div>
+            
+            <p id="game-message" role="status" aria-live="polite" style="text-align: center; color: white; font-family: monospace; margin-top: 10px;"></p>
+        </main>
         
         <script src="script.js"></script>
     </body>
