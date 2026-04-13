@@ -1,7 +1,7 @@
-:root{
-  --board-gap: 10px;
-  --cell-min: 36px;
-  --cell-max: 64px;
+:root {
+  --board-gap: 8px;      
+  --cell-min: 30px;      
+  --cell-max: 50px;     
   --cols: 10;
   --muted-ink: #2c2f3a;
 }
@@ -186,11 +186,11 @@ body{
 .cell.open[data-number='4']{ color:#7c3aed }
 
 @media (max-width:520px){
-  :root{ --cell-min:28px; --cell-max:40px }
-  .game{ padding:12px }
-  .timer, .flags{ padding:6px 8px }
-  .btn-start{ padding:8px 10px }
-
+  :root { 
+    --cell-min: 24px; 
+    --cell-max: 32px; 
+    --board-gap: 5px; 
+  }
 }
 
 
