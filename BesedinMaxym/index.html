@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minesweeper — Gothic</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-container">
+    <!-- Decorative corner ornaments -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <h1 class="game-title">☠ Minesweeper ☠</h1>
+    <p class="game-subtitle">— Memento Mori —</p>
+
+    <!-- ===== HEADER ===== -->
+    <div class="game-header">
+      <!-- Flag counter -->
+      <div class="counter flag-counter" title="Прапорці">
+        <span class="counter-icon">⚑</span>
+        <div class="counter-digits">
+          <span class="digit" id="flag-d1">0</span>
+          <span class="digit" id="flag-d2">1</span>
+          <span class="digit" id="flag-d3">0</span>
+        </div>
+      </div>
+
+      <!-- Start / new game button -->
+      <button class="btn-start" id="btn-start" title="Нова гра">
+        <span class="face">💀</span>
+      </button>
+
+      <!-- Timer -->
+      <div class="counter timer" title="Таймер">
+        <span class="counter-icon">⏳</span>
+        <div class="counter-digits">
+          <span class="digit" id="time-d1">0</span>
+          <span class="digit" id="time-d2">0</span>
+          <span class="digit" id="time-d3">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GAME FIELD ===== -->
+    <div class="field" id="field"></div>
+
+    <!-- ===== GAME OVER MESSAGE ===== -->
+    <div class="game-over-modal" id="gameOverModal">
+      <div class="modal-content">
+        <p id="gameOverMessage"></p>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
