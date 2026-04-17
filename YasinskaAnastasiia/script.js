@@ -32,7 +32,9 @@ const gameState = {
   status: GAME_STATUS.PROCESS,
   gameTime: 0,
   timerId: null,
-  field: []
+  field: [],
+  openedCellsCount: 0,
+  flagsCount: 0
 };
 
 const boardElement = document.getElementById('game-board');
