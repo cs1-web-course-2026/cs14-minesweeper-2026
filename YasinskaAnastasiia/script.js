@@ -211,7 +211,8 @@ function openCell(row, col) {
     return;
   }
 
-  cell.state = CELL_STATE.OPENED;
+cell.state = CELL_STATE.OPENED;
+gameState.openedCellsCount++;
 
   if (cell.type === CELL_TYPE.MINE) {
     gameState.status = GAME_STATUS.LOSE;
