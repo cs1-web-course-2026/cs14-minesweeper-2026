@@ -61,9 +61,10 @@ function isInsideField(row, col) {
 function getNeighbors(row, col) {
   const neighbors = [];
 
-  for (const [directionRow, directionCol] of DIRECTIONS) {
-    const neighborRow = row + directionRow;
-    const neighborCol = col + directionCol;
+  for (const [directionalRow, directionalCol] of DIRECTIONS) {
+  const neighborRow = row + directionalRow;
+  const neighborCol = col + directionalCol;
+}
 
     if (isInsideField(neighborRow, neighborCol)) {
       neighbors.push([neighborRow, neighborCol]);
