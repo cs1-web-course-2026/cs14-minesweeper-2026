@@ -285,7 +285,7 @@ function updateTimer() {
 }
 
 function updateFlagsCounter() {
-  const availableFlags = gameState.minesCount - getFlagsCount();
+  const availableFlags = gameState.minesCount - gameState.flagsCount;
   flagsElement.textContent = availableFlags;
 }
 
