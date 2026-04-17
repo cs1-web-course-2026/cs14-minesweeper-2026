@@ -256,10 +256,12 @@ function toggleFlag(row, col) {
   }
 
   if (cell.state === CELL_STATE.CLOSED) {
-    cell.state = CELL_STATE.FLAGGED;
-  } else if (cell.state === CELL_STATE.FLAGGED) {
-    cell.state = CELL_STATE.CLOSED;
-  }
+  cell.state = CELL_STATE.FLAGGED;
+  gameState.flagsCount++;
+} else if (cell.state === CELL_STATE.FLAGGED) {
+  cell.state = CELL_STATE.CLOSED;
+  gameState.flagsCount--;
+}
 
   renderGame();
 }
