@@ -329,6 +329,7 @@ cellElement.classList.add('cell');
       }
     } else if (cell.neighborMines > 0) {
       cellElement.classList.add(getNumberClass(cell.neighborMines));
+      cellElement.textContent = cell.neighborMines;
     }
   }
 
