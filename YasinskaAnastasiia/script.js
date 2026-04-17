@@ -336,7 +336,26 @@ cellElement.classList.add('cell');
   if (cell.state === CELL_STATE.FLAGGED) {
     cellElement.classList.add('flag');
   }
+let stateLabel;
 
+if (cell.state === CELL_STATE.FLAGGED) {
+  stateLabel = 'flagged';
+} else if (cell.state === CELL_STATE.OPENED) {
+  if (cell.type === CELL_TYPE.MINE) {
+    stateLabel = 'opened, mine';
+  } else if (cell.neighborMines > 0) {
+    stateLabel = `opened, ${cell.neighborMines} neighboring mines`;
+  } else {
+    stateLabel = 'opened, empty';
+  }
+} else {
+  stateLabel = 'closed';
+}
+
+cellElement.setAttribute(
+  'aria-label',
+  `Row ${row + 1}, column ${col + 1}, ${stateLabel}`
+);
   cellElement.addEventListener('click', () => {
     openCell(row, col);
   });
