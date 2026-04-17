@@ -309,8 +309,9 @@ function getNumberClass(number) {
 }
 
 function createCellElement(cell, row, col) {
-  const cellElement = document.createElement('div');
-  cellElement.classList.add('cell');
+ const cellElement = document.createElement('button');
+cellElement.type = 'button';
+cellElement.classList.add('cell');
 
   if (cell.state === CELL_STATE.OPENED) {
     cellElement.classList.add('open');
