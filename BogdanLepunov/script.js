@@ -13,7 +13,6 @@ const state = {
   status: "play"
 };
 
-
 function createField() {
   state.field = Array.from({ length: state.rows }, () =>
     Array.from({ length: state.cols }, () => ({
@@ -96,13 +95,13 @@ function checkWin() {
 function win() {
   state.status = "win";
   stopTimer();
-  alert("🎉 Победа!");
+  alert("🎉 Перемога!");
 }
 
 function lose() {
   state.status = "lose";
   stopTimer();
-  alert("💥 Проигрыш");
+  alert("💥 Програш");
   forEachCell(c => c.mine && (c.open = true));
 }
 
