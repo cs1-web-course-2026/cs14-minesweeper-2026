@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper UI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <div class="counter">🚩 <span id="flagCounter">0</span></div>
+            <button class="restart-btn" id="restartBtn">🙂</button>
+            <div class="timer">⏱ <span id="timerDisplay">000</span></div>
+        </header>
+
+        <main class="game-board" id="gameBoard">
+            <!-- Клітинки генеруються динамічно через JavaScript -->
+        </main>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
