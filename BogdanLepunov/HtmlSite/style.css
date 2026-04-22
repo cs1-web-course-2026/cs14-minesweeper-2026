@@ -1,0 +1,59 @@
+body {
+  font-family: 'Public Pixel', monospace;
+  background: black;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.game {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.panel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+button {
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: Comic Sans MS;
+}
+
+.field {
+  display: grid;
+  gap: 5px;
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  background: #bbb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cell.open {
+  background: #eee;
+  cursor: default;
+}
+
+.cell.mine {
+  background: red;
+}
+
+.cell.flag {
+  background: orange;
+}
+@font-face {
+  font-family: 'Public Pixel';
+  src: url('Font/PublicPixel.ttf') format('truetype');
+}
