@@ -23,7 +23,7 @@ function createField() {
     }))
   );
 
- 
+  
   let placed = 0;
   while (placed < state.mines) {
     let r = rand(state.rows);
@@ -101,7 +101,7 @@ function win() {
 function lose() {
   state.status = "lose";
   stopTimer();
-  alert("💥 Програш");
+  alert("💥 Програв!");
   forEachCell(c => c.mine && (c.open = true));
 }
 
