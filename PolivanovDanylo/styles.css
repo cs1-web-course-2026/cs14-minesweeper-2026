@@ -94,33 +94,49 @@ body {
 }
 
 /* Закрита клітинка */
-.closed {
+.cell.closed {
     background: #c0c0c0;
     border: 3px solid #7b7b7b;
     border-top-color: #ffffff;
     border-left-color: #ffffff;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.cell.closed:hover {
+    background: #d9d9d9;
+}
+
+.cell.closed:active {
+    background: #a0a0a0;
+    border-top-color: #7b7b7b;
+    border-left-color: #7b7b7b;
+    border-bottom-color: #ffffff;
+    border-right-color: #ffffff;
 }
 
 /* Відкрита клітинка */
-.open {
+.cell.opened {
     background: #d9d9d9;
     border: 1px solid #8a8a8a;
+    cursor: default;
 }
 
 /* Клітинка з прапорцем */
-.flag::before {
-    content: "🚩";
-    font-size: 22px;
+.cell.flagged {
+    background: #c0c0c0;
+    border: 3px solid #7b7b7b;
+    border-top-color: #ffffff;
+    border-left-color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Клітинка з міною */
-.mine {
+.cell.opened.mine {
     background: #d9d9d9;
-}
-
-/* Клітинка з міною, на яку натиснув користувач */
-.mine-clicked {
-    background: #ff6b6b;
     color: #000;
 }
 
