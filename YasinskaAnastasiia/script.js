@@ -142,6 +142,16 @@ function stopTimer() {
     gameState.timerId = null;
   }
 }
+function startTimer() {
+  if (gameState.timerId !== null) {
+    return;
+  }
+
+  gameState.timerId = setInterval(() => {
+    gameState.gameTime++;
+    updateTimer();
+  }, 1000);
+}
 
 function initGame(
   rows = DEFAULT_ROWS,
@@ -200,10 +210,8 @@ function openCell(row, col) {
   if (gameState.status !== GAME_STATUS.PROCESS) {
     return;
   }
-
-  if (gameState.timerId === null) {
-    startTimer();
-  }
+startTimer();
+}
 
   const cell = gameState.field[row][col];
 
@@ -245,9 +253,7 @@ function toggleFlag(row, col) {
     return;
   }
 
-  if (gameState.timerId === null) {
-    startTimer();
-  }
+ startTimer();
 
   const cell = gameState.field[row][col];
 
