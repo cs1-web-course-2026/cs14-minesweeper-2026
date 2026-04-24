@@ -74,7 +74,6 @@ function getNeighbors(row, col) {
   }
 
   return neighbors;
-}
 
 function generateField(rows, cols, minesCount) {
   const field = [];
@@ -239,7 +238,6 @@ gameState.openedCellsCount++;
 
   checkWin();
   renderGame();
-}
 
 function toggleFlag(row, col) {
   if (!isInsideField(row, col)) {
