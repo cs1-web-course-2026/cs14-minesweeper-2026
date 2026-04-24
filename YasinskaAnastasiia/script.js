@@ -165,6 +165,8 @@ function initGame(
   gameState.gameTime = 0;
 
   stopTimer();
+  gameState.openedCellsCount = 0;
+gameState.flagsCount = 0;
 
   gameState.field = generateField(rows, cols, minesCount);
   countNeighbourMines();
@@ -183,18 +185,13 @@ function revealAllMines() {
 }
 
 function checkWin() {
-  let openedSafeCells = 0;
   const safeCellsCount = gameState.rows * gameState.cols - gameState.minesCount;
 
-  for (let row = 0; row < gameState.rows; row++) {
-    for (let col = 0; col < gameState.cols; col++) {
-      const cell = gameState.field[row][col];
-
-      if (cell.type === CELL_TYPE.EMPTY && cell.state === CELL_STATE.OPENED) {
-        openedSafeCells++;
-      }
-    }
+  if (gameState.openedCellsCount === safeCellsCount) {
+    gameState.status = GAME_STATUS.WIN;
+    stopTimer();
   }
+}
 
   if (openedSafeCells === safeCellsCount) {
     gameState.status = GAME_STATUS.WIN;
