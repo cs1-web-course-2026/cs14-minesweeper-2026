@@ -8,20 +8,26 @@
 </head>
 
 <body>
-<p class="status" id="game-status-message" role="status" aria-live="polite"></p>
+
+  <div class="game">
+
     <h1 class="title">Minesweeper</h1>
 
     <div class="header">
       <div class="counter">🚩 <span id="flags-count">15</span></div>
-      <button class="start-btn" id="restart-btn" type="button">Нова гра</button>
+
+      <button class="start-btn" id="restart-btn" type="button">
+        Нова гра
+      </button>
+
       <div class="timer">⏱ <span id="timer-value">000</span></div>
     </div>
 
-   <p class="status" id="game-status-message" role="status" aria-live="polite"></p>
+    <p class="status" id="game-status-message" role="status" aria-live="polite"></p>
 
     <div class="board" id="game-board"></div>
+
   </div>
 
   <script src="script.js"></script>
 </body>
-</html>

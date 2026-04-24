@@ -196,7 +196,6 @@ function checkWin() {
     gameState.status = GAME_STATUS.WIN;
     stopTimer();
   }
-}
 
 function openCell(row, col) {
   if (!isInsideField(row, col)) {
