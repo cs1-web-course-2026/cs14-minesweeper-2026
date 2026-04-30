@@ -71,8 +71,9 @@ body {
 
 .game-board {
     display: grid;
-    grid-template-columns: repeat(8, 42px);
-    grid-template-rows: repeat(8, 42px);
+    /* Використовуємо змінні для розмірів */
+    grid-template-columns: repeat(var(--cols, 10), var(--cell-size, 42px));
+    grid-template-rows: repeat(var(--rows, 10), var(--cell-size, 42px));
     gap: 2px;
     background: #7b7b7b;
     padding: 4px;
@@ -83,14 +84,26 @@ body {
 }
 
 .cell {
-    width: 42px;
-    height: 42px;
+    width: var(--cell-size, 42px);
+    height: var(--cell-size, 42px);
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
     font-size: 22px;
     user-select: none;
+}
+
+/* Адаптивність: змінюємо лише значення змінної */
+@media (max-width: 600px) {
+    :root {
+        --cell-size: 34px;
+    }
+    
+    .cell {
+        font-size: 18px;
+    }
+    /* ... інші адаптивні стилі ... */
 }
 
 /* Закрита клітинка */
