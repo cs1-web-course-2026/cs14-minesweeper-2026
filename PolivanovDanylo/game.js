@@ -185,7 +185,17 @@ function renderBoard() {
 function updateHeader() {
   if (flagCounterElement) flagCounterElement.textContent = String(gameState.minesCount - getFlagCount()).padStart(2, '0');
   if (timerDisplayElement) timerDisplayElement.textContent = String(gameState.gameTime).padStart(3, '0');
-  if (restartButton) restartButton.textContent = gameState.status === GameStatus.WIN ? '😎' : gameState.status === GameStatus.LOSE ? '💥' : '🙂';
+  if (restartButton) {
+    const isWin = gameState.status === GameStatus.WIN;
+    const isLose = gameState.status === GameStatus.LOSE;
+    restartButton.textContent = isWin ? '😎' : isLose ? '💥' : '🙂';
+    const label = isWin ? 'Перемога. Нова гра' : isLose ? 'Поразка. Нова гра' : 'Старт / Рестарт';
+    restartButton.title = label;
+    restartButton.setAttribute('aria-label', label);
+  }
+  if (gameBoardElement) {
+    gameBoardElement.dataset.status = gameState.status;
+  }
 }
 
 function updateView() {
