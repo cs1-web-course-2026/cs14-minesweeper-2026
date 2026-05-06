@@ -7,6 +7,12 @@ const CellType = { EMPTY: 'empty', MINE: 'mine' };
 const CellState = { CLOSED: 'closed', OPENED: 'opened', FLAGGED: 'flagged' };
 const GameStatus = { PROCESS: 'process', WIN: 'win', LOSE: 'lose' };
 
+const GAME_MESSAGE = {
+  WIN: 'Перемога! Гру завершено.',
+  LOSE: 'Програш! Гру завершено.',
+  NONE: '',
+};
+
 let gameState = {
   rows: 10,
   cols: 10,
@@ -21,6 +27,7 @@ const gameBoardElement = document.getElementById('gameBoard');
 const flagCounterElement = document.getElementById('flagCounter');
 const timerDisplayElement = document.getElementById('timerDisplay');
 const restartButton = document.getElementById('restartBtn');
+const gameMessageElement = document.getElementById('gameMessage');
 
 const neighbourDirections = [
   [-1, -1], [-1, 0], [-1, 1],
@@ -195,6 +202,15 @@ function updateHeader() {
   }
   if (gameBoardElement) {
     gameBoardElement.dataset.status = gameState.status;
+  }
+  if (gameMessageElement) {
+    if (gameState.status === GameStatus.WIN) {
+      gameMessageElement.textContent = GAME_MESSAGE.WIN;
+    } else if (gameState.status === GameStatus.LOSE) {
+      gameMessageElement.textContent = GAME_MESSAGE.LOSE;
+    } else {
+      gameMessageElement.textContent = GAME_MESSAGE.NONE;
+    }
   }
 }
 
