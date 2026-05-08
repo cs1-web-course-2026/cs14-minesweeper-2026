@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minesweeper UI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game">
+      <header class="header" aria-label="Панель гри">
+        <div class="counter" aria-label="Кількість мін">010</div>
+        <button class="smile" type="button" aria-label="Нова гра">🙂</button>
+        <div class="counter" aria-label="Таймер">000</div>
+      </header>
+
+      <section class="board" aria-label="Ігрове поле">
+        <button
+          class="cell closed"
+          type="button"
+          aria-label="Закрита клітинка"
+        ></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+
+        <button class="cell closed" type="button"></button>
+        <button class="cell open mine" type="button" aria-label="Міна"></button>
+        <button class="cell open n1" type="button">1</button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell open n2" type="button">2</button>
+        <button class="cell flag" type="button" aria-label="Прапорець"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+
+        <button class="cell closed" type="button"></button>
+        <button class="cell open n1" type="button">1</button>
+        <button class="cell open n1" type="button">1</button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell open n2" type="button">2</button>
+        <button class="cell flag" type="button" aria-label="Прапорець"></button>
+        <button class="cell open n2" type="button">2</button>
+        <button class="cell closed" type="button"></button>
+
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell open n1" type="button">1</button>
+        <button class="cell open n1" type="button">1</button>
+        <button class="cell open n1" type="button">1</button>
+        <button class="cell closed" type="button"></button>
+
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell open n2" type="button">2</button>
+        <button class="cell open n1" type="button">1</button>
+        <button class="cell open n1" type="button">1</button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+
+        <button class="cell closed" type="button"></button>
+        <button class="cell open mine" type="button"></button>
+        <button
+          class="cell flag"
+          type="button"
+          aria-label="Прапорець на міні"
+        ></button>
+        <button class="cell open mine" type="button"></button>
+        <button class="cell open n2" type="button">2</button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+
+        <button class="cell closed" type="button"></button>
+        <button class="cell open mine" type="button"></button>
+        <button class="cell open n5" type="button">5</button>
+        <button class="cell open mine" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button
+          class="cell open mine hit"
+          type="button"
+          aria-label="Натиснута міна"
+        ></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+        <button class="cell closed" type="button"></button>
+      </section>
+
+      <section class="legend" aria-label="Демо станів клітинок">
+        <h2 class="legend-title">Стани клітинок</h2>
+        <div class="legend-row">
+          <button class="cell closed" type="button"></button>
+          <button class="cell open n1" type="button">1</button>
+          <button
+            class="cell flag"
+            type="button"
+            aria-label="Прапорець"
+          ></button>
+          <button
+            class="cell open mine"
+            type="button"
+            aria-label="Міна"
+          ></button>
+          <button
+            class="cell open mine hit"
+            type="button"
+            aria-label="Натиснута міна"
+          ></button>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
