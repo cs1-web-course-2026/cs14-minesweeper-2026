@@ -2,19 +2,49 @@
 //  MINESWEEPER — Game Logic (script.js)
 // ============================================================
 
+// ── 0. Constants ─────────────────────────────────────────────
+
+const GAME_STATUS = {
+  PROCESS: 'process',
+  WIN:     'win',
+  LOSE:    'lose',
+};
+
+const CELL_STATE = {
+  OPENED:   'opened',
+  CLOSED:   'closed',
+  FLAGGED:  'flagged',
+  EXPLODED: 'exploded',
+  REVEALED: 'revealed',
+};
+
+const CELL_TYPE = {
+  MINE:  'mine',
+  EMPTY: 'empty',
+};
+
+const DEFAULT_ROWS        = 10;
+const DEFAULT_COLS        = 10;
+const DEFAULT_MINES_COUNT = 15;
+const TIMER_TICK_MS       = 1000;
+const MAX_HUD_VALUE       = 999;
+const HUD_PAD_WIDTH       = 3;
+
+
 // ── 1. Game State ────────────────────────────────────────────
 
 const gameState = {
-  rows: 10,
-  cols: 10,
-  minesCount: 15,
-  status: 'process', // 'process' | 'win' | 'lose'
+  rows: DEFAULT_ROWS,
+  cols: DEFAULT_COLS,
+  minesCount: DEFAULT_MINES_COUNT,
+  status: GAME_STATUS.PROCESS,
   gameTime: 0,
   timerId: null,
 };
 
 /** @type {Array<Array<{type: string, state: string, neighborMines: number}>>} */
 let field = [];
+
 
 // ── 2. Field Generation ──────────────────────────────────────
 
@@ -27,12 +57,13 @@ let field = [];
 function createEmptyField(rows, cols) {
   return Array.from({ length: rows }, () =>
     Array.from({ length: cols }, () => ({
-      type: 'empty',
-      state: 'closed',
+      type: CELL_TYPE.EMPTY,
+      state: CELL_STATE.CLOSED,
       neighborMines: 0,
     }))
   );
 }
+
 
 /**
  * Generates a game field with randomly placed mines.
@@ -49,15 +80,17 @@ function generateField(rows, cols, minesCount) {
     const row = Math.floor(Math.random() * rows);
     const col = Math.floor(Math.random() * cols);
 
-    if (grid[row][col].type !== 'mine') {
-      grid[row][col].type = 'mine';
+    if (grid[row][col].type !== CELL_TYPE.MINE) {
+      grid[row][col].type = CELL_TYPE.MINE;
       placed++;
     }
   }
 
   countNeighbourMines(grid, rows, cols);
+
   return grid;
 }
+
 
 // ── 3. Business Logic ────────────────────────────────────────
 
@@ -71,18 +104,23 @@ function generateField(rows, cols, minesCount) {
  */
 function getNeighbours(row, col, rows, cols) {
   const neighbours = [];
-  for (let dr = -1; dr <= 1; dr++) {
-    for (let dc = -1; dc <= 1; dc++) {
-      if (dr === 0 && dc === 0) continue;
-      const r = row + dr;
-      const c = col + dc;
-      if (r >= 0 && r < rows && c >= 0 && c < cols) {
-        neighbours.push([r, c]);
+
+  for (let directionalRow = -1; directionalRow <= 1; directionalRow++) {
+    for (let directionalCol = -1; directionalCol <= 1; directionalCol++) {
+      if (directionalRow === 0 && directionalCol === 0) continue;
+
+      const neighbourRow = row + directionalRow;
+      const neighbourCol = col + directionalCol;
+
+      if (neighbourRow >= 0 && neighbourRow < rows && neighbourCol >= 0 && neighbourCol < cols) {
+        neighbours.push([neighbourRow, neighbourCol]);
       }
     }
   }
+
   return neighbours;
 }
+
 
 /**
  * Calculates and stores neighborMines count for every empty cell.
@@ -93,16 +131,17 @@ function getNeighbours(row, col, rows, cols) {
 function countNeighbourMines(grid, rows, cols) {
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      if (grid[row][col].type === 'mine') continue;
+      if (grid[row][col].type === CELL_TYPE.MINE) continue;
 
       const mineCount = getNeighbours(row, col, rows, cols)
-        .filter(([r, c]) => grid[r][c].type === 'mine')
+        .filter(([neighbourRow, neighbourCol]) => grid[neighbourRow][neighbourCol].type === CELL_TYPE.MINE)
         .length;
 
       grid[row][col].neighborMines = mineCount;
     }
   }
 }
+
 
 /**
  * Recursively opens a cell and all connected empty neighbours.
@@ -113,16 +152,16 @@ function countNeighbourMines(grid, rows, cols) {
 function openCellRecursive(row, col) {
   const cell = field[row][col];
 
-  if (cell.state === 'opened' || cell.state === 'flagged') return;
+  if (cell.state === CELL_STATE.OPENED || cell.state === CELL_STATE.FLAGGED) return;
 
-  cell.state = 'opened';
+  cell.state = CELL_STATE.OPENED;
 
-  // Flood-fill: keep going while cells have no neighbouring mines
-  if (cell.type === 'empty' && cell.neighborMines === 0) {
+  if (cell.type === CELL_TYPE.EMPTY && cell.neighborMines === 0) {
     getNeighbours(row, col, gameState.rows, gameState.cols)
-      .forEach(([r, c]) => openCellRecursive(r, c));
+      .forEach(([neighbourRow, neighbourCol]) => openCellRecursive(neighbourRow, neighbourCol));
   }
 }
+
 
 /**
  * Opens a cell, handles win/lose logic, then re-renders.
@@ -131,14 +170,15 @@ function openCellRecursive(row, col) {
  * @param {number} col
  */
 function openCell(row, col) {
-  if (gameState.status !== 'process') return;
+  if (gameState.status !== GAME_STATUS.PROCESS) return;
 
   const cell = field[row][col];
-  if (cell.state === 'opened' || cell.state === 'flagged') return;
 
-  if (cell.type === 'mine') {
-    cell.state = 'opened';
-    gameState.status = 'lose';
+  if (cell.state === CELL_STATE.OPENED || cell.state === CELL_STATE.FLAGGED) return;
+
+  if (cell.type === CELL_TYPE.MINE) {
+    cell.state = CELL_STATE.OPENED;
+    gameState.status = GAME_STATUS.LOSE;
     stopTimer();
     revealAllMines(row, col);
   } else {
@@ -150,6 +190,7 @@ function openCell(row, col) {
   updateHUD();
 }
 
+
 /**
  * Reveals all mines after a loss.
  * Marks the triggered mine as 'exploded', others as 'revealed'.
@@ -160,14 +201,16 @@ function revealAllMines(triggeredRow, triggeredCol) {
   for (let row = 0; row < gameState.rows; row++) {
     for (let col = 0; col < gameState.cols; col++) {
       const cell = field[row][col];
-      if (cell.type === 'mine' && cell.state !== 'flagged') {
+
+      if (cell.type === CELL_TYPE.MINE && cell.state !== CELL_STATE.FLAGGED) {
         cell.state = row === triggeredRow && col === triggeredCol
-          ? 'exploded'
-          : 'revealed';
+          ? CELL_STATE.EXPLODED
+          : CELL_STATE.REVEALED;
       }
     }
   }
 }
+
 
 /**
  * Checks whether all non-mine cells are opened.
@@ -176,15 +219,16 @@ function revealAllMines(triggeredRow, triggeredCol) {
 function checkWin() {
   const allClear = field.every(row =>
     row.every(cell =>
-      cell.type === 'mine' || cell.state === 'opened'
+      cell.type === CELL_TYPE.MINE || cell.state === CELL_STATE.OPENED
     )
   );
 
   if (allClear) {
-    gameState.status = 'win';
+    gameState.status = GAME_STATUS.WIN;
     stopTimer();
   }
 }
+
 
 // ── 4. Flags & Timer ─────────────────────────────────────────
 
@@ -194,25 +238,29 @@ function checkWin() {
  * @param {number} col
  */
 function toggleFlag(row, col) {
-  if (gameState.status !== 'process') return;
+  if (gameState.status !== GAME_STATUS.PROCESS) return;
 
   const cell = field[row][col];
-  if (cell.state === 'opened') return;
 
-  cell.state = cell.state === 'flagged' ? 'closed' : 'flagged';
+  if (cell.state === CELL_STATE.OPENED) return;
+
+  cell.state = cell.state === CELL_STATE.FLAGGED ? CELL_STATE.CLOSED : CELL_STATE.FLAGGED;
 
   renderBoard();
   updateHUD();
 }
 
+
 /** Starts the game timer (increments every second). */
 function startTimer() {
-  if (gameState.timerId) return; // already running
+  if (gameState.timerId) return;
+
   gameState.timerId = setInterval(() => {
     gameState.gameTime++;
     updateHUD();
-  }, 1000);
+  }, TIMER_TICK_MS);
 }
+
 
 /** Stops the game timer. */
 function stopTimer() {
@@ -222,13 +270,14 @@ function stopTimer() {
   }
 }
 
+
 // ── 5. Game Flow ─────────────────────────────────────────────
 
 /** Resets and starts a new game. */
 function startGame() {
   stopTimer();
 
-  gameState.status = 'process';
+  gameState.status = GAME_STATUS.PROCESS;
   gameState.gameTime = 0;
   gameState.timerId = null;
 
@@ -239,6 +288,7 @@ function startGame() {
   updateHUD();
 }
 
+
 // ── 6. Helpers ───────────────────────────────────────────────
 
 /**
@@ -247,31 +297,40 @@ function startGame() {
  */
 function countFlags() {
   return field.reduce((sum, row) =>
-    sum + row.filter(cell => cell.state === 'flagged').length, 0
+    sum + row.filter(cell => cell.state === CELL_STATE.FLAGGED).length, 0
   );
 }
 
+
 /**
  * Pads a number with leading zeros to a given width.
- * @param {number} n
+ * @param {number} count
  * @param {number} width
  * @returns {string}
  */
-function padNumber(n, width = 3) {
-  return String(Math.min(n, 999)).padStart(width, '0');
+function padNumber(count, width = HUD_PAD_WIDTH) {
+  return String(Math.min(count, MAX_HUD_VALUE)).padStart(width, '0');
 }
+
 
 // ── 7. Rendering ─────────────────────────────────────────────
 
 /** Updates the HUD: flag counter, timer, and face emoji. */
 function updateHUD() {
   const remaining = gameState.minesCount - countFlags();
+
   document.getElementById('flag-count').textContent = padNumber(remaining);
   document.getElementById('timer').textContent      = padNumber(gameState.gameTime);
 
-  const faceMap = { process: '🙂', win: '😎', lose: '😵' };
+  const faceMap = {
+    [GAME_STATUS.PROCESS]: '🙂',
+    [GAME_STATUS.WIN]:     '😎',
+    [GAME_STATUS.LOSE]:    '😵',
+  };
+
   document.getElementById('face').textContent = faceMap[gameState.status];
 }
+
 
 /**
  * Builds the CSS class list for a cell.
@@ -281,22 +340,24 @@ function updateHUD() {
 function getCellClasses(cell) {
   const classes = ['cell'];
 
-  if (cell.state === 'opened') {
+  if (cell.state === CELL_STATE.OPENED) {
     classes.push('open');
-    if (cell.type === 'mine') {
+
+    if (cell.type === CELL_TYPE.MINE) {
       classes.push('mine', 'revealed');
     } else if (cell.neighborMines === 0) {
       classes.push('empty');
     } else {
       classes.push(`n${cell.neighborMines}`);
     }
-  } else if (cell.state === 'exploded') {
+  } else if (cell.state === CELL_STATE.EXPLODED) {
     classes.push('mine', 'exploded');
-  } else if (cell.state === 'revealed') {
+  } else if (cell.state === CELL_STATE.REVEALED) {
     classes.push('mine', 'revealed');
-  } else if (cell.state === 'flagged') {
+  } else if (cell.state === CELL_STATE.FLAGGED) {
     classes.push('closed', 'flagged');
-    if (cell.type === 'mine') classes.push('mine-under');
+
+    if (cell.type === CELL_TYPE.MINE) classes.push('mine-under');
   } else {
     classes.push('closed');
   }
@@ -304,19 +365,23 @@ function getCellClasses(cell) {
   return classes.join(' ');
 }
 
+
 /**
  * Returns the visible text content for a cell button.
  * @param {{type: string, state: string, neighborMines: number}} cell
  * @returns {string}
  */
 function getCellContent(cell) {
-  if (cell.state === 'flagged')  return '⚑';
-  if (cell.state === 'exploded' || cell.state === 'revealed') return '💣';
-  if (cell.state === 'opened' && cell.type !== 'mine' && cell.neighborMines > 0) {
+  if (cell.state === CELL_STATE.FLAGGED)  return '⚑';
+  if (cell.state === CELL_STATE.EXPLODED || cell.state === CELL_STATE.REVEALED) return '💣';
+
+  if (cell.state === CELL_STATE.OPENED && cell.type !== CELL_TYPE.MINE && cell.neighborMines > 0) {
     return String(cell.neighborMines);
   }
+
   return '';
 }
+
 
 /**
  * Returns an accessible aria-label for a cell.
@@ -324,14 +389,17 @@ function getCellContent(cell) {
  * @returns {string}
  */
 function getCellAriaLabel(cell) {
-  if (cell.state === 'flagged')  return 'Прапорець';
-  if (cell.state === 'exploded') return 'Підірвана міна';
-  if (cell.state === 'revealed') return 'Міна';
-  if (cell.state === 'opened') {
+  if (cell.state === CELL_STATE.FLAGGED)  return 'Прапорець';
+  if (cell.state === CELL_STATE.EXPLODED) return 'Підірвана міна';
+  if (cell.state === CELL_STATE.REVEALED) return 'Міна';
+
+  if (cell.state === CELL_STATE.OPENED) {
     return cell.neighborMines > 0 ? String(cell.neighborMines) : 'Порожня клітинка';
   }
+
   return 'Закрита клітинка';
 }
+
 
 /** Re-renders the entire game board into #game-board. */
 function renderBoard() {
@@ -343,33 +411,33 @@ function renderBoard() {
     rowEl.className = 'row';
 
     rowData.forEach((cell, col) => {
-      const btn = document.createElement('button');
-      btn.className    = getCellClasses(cell);
-      btn.textContent  = getCellContent(cell);
-      btn.setAttribute('aria-label', getCellAriaLabel(cell));
+      const button = document.createElement('button');
+      button.className    = getCellClasses(cell);
+      button.textContent  = getCellContent(cell);
+      button.setAttribute('aria-label', getCellAriaLabel(cell));
 
-      // Left click — open cell (start timer on first click)
-      btn.addEventListener('click', () => {
-        if (gameState.status !== 'process') return;
+      button.addEventListener('click', () => {
+        if (gameState.status !== GAME_STATUS.PROCESS) return;
         openCell(row, col);
       });
 
-      // Right click — toggle flag
-      btn.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
+      button.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
         toggleFlag(row, col);
       });
 
-      rowEl.appendChild(btn);
+      rowEl.appendChild(button);
     });
 
     board.appendChild(rowEl);
   });
 }
 
+
 // ── 8. Event Listeners ───────────────────────────────────────
 
 document.getElementById('start-btn').addEventListener('click', startGame);
+
 
 // ── 9. Bootstrap ─────────────────────────────────────────────
 
