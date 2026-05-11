@@ -362,6 +362,7 @@ function initializeGame() {
  */
 function getCell(row, col) {
   if (
+    gameState.field.length === 0 ||
     row < 0 ||
     row >= gameState.field.length ||
     col < 0 ||
