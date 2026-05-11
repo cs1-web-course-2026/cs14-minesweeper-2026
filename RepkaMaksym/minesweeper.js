@@ -188,7 +188,8 @@ function openCell(row, col) {
   // Перевіряємо, чи гра ще не закінчилася
   if (gameState.status !== 'process') return;
 
-  const cell = gameField[row][col];
+  const cell = getCell(row, col);
+  if (cell === null) return;
 
   // Якщо клітинка вже відкрита або має прапорець, нічого не робимо
   if (cell.state === 'opened' || cell.state === 'flagged') return;
@@ -271,7 +272,8 @@ function toggleFlag(row, col) {
   // Перевіряємо, чи гра ще не закінчилася
   if (gameState.status !== 'process') return;
 
-  const cell = gameField[row][col];
+  const cell = getCell(row, col);
+  if (cell === null) return;
 
   // Не можна ставити прапорець на відкриту клітинку
   if (cell.state === 'opened') return;
