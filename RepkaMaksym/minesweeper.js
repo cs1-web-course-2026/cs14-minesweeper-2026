@@ -93,29 +93,29 @@ function generateField(rows, cols, minesCount) {
  * @returns {number} Кількість мін у сусідніх клітинках
  */
 function countNeighbourMines(row, col, field) {
-  let count = 0;
+  let mineCount = 0;
   const rows = field.length;
   const cols = field[0].length;
 
   // Перевіряємо всі 8 сусідів
-  for (let dx = -1; dx <= 1; dx++) {
-    for (let dy = -1; dy <= 1; dy++) {
+  for (let directionalRow = -1; directionalRow <= 1; directionalRow++) {
+    for (let directionalCol = -1; directionalCol <= 1; directionalCol++) {
       // Пропускаємо саму клітинку
-      if (dx === 0 && dy === 0) continue;
+      if (directionalRow === 0 && directionalCol === 0) continue;
 
-      const newRow = row + dx;
-      const newCol = col + dy;
+      const neighbourRow = row + directionalRow;
+      const neighbourCol = col + directionalCol;
 
       // Перевіряємо, чи координати в межах поля
-      if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
-        if (field[newRow][newCol].type === 'mine') {
-          count++;
+      if (neighbourRow >= 0 && neighbourRow < rows && neighbourCol >= 0 && neighbourCol < cols) {
+        if (field[neighbourRow][neighbourCol].type === 'mine') {
+          mineCount++;
         }
       }
     }
   }
 
-  return count;
+  return mineCount;
 }
 
 /**
@@ -153,14 +153,14 @@ function openNeighbours(row, col, field, visited = new Set()) {
   visited.add(key);
 
   // Перевіряємо всіх 8 сусідів
-  for (let dx = -1; dx <= 1; dx++) {
-    for (let dy = -1; dy <= 1; dy++) {
-      const newRow = row + dx;
-      const newCol = col + dy;
+  for (let directionalRow = -1; directionalRow <= 1; directionalRow++) {
+    for (let directionalCol = -1; directionalCol <= 1; directionalCol++) {
+      const neighbourRow = row + directionalRow;
+      const neighbourCol = col + directionalCol;
 
       // Перевіряємо межі поля
-      if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
-        const cell = field[newRow][newCol];
+      if (neighbourRow >= 0 && neighbourRow < rows && neighbourCol >= 0 && neighbourCol < cols) {
+        const cell = field[neighbourRow][neighbourCol];
 
         // Не відкриваємо закриті прапорці та міни
         if (cell.state === 'flagged' || cell.type === 'mine') continue;
@@ -171,7 +171,7 @@ function openNeighbours(row, col, field, visited = new Set()) {
 
           // Якщо це порожня клітинка, рекурсивно відкриваємо її сусідів
           if (cell.neighborMines === 0) {
-            openNeighbours(newRow, newCol, field, visited);
+            openNeighbours(neighbourRow, neighbourCol, field, visited);
           }
         }
       }
