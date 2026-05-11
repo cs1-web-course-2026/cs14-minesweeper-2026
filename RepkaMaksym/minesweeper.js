@@ -200,6 +200,7 @@ function openNeighbours(row, col, field, visited = new Set()) {
  * Логіка відкриття клітинки
  * @param {number} row - Рядок клітинки
  * @param {number} col - Стовпець клітинки
+ * @returns {void}
  */
 function openCell(row, col) {
   // Перевіряємо, чи гра ще не закінчилася
@@ -284,6 +285,7 @@ function revealAllMines() {
  * Переключає прапорець на клітинці
  * @param {number} row - Рядок клітинки
  * @param {number} col - Стовпець клітинки
+ * @returns {void}
  */
 function toggleFlag(row, col) {
   // Перевіряємо, чи гра ще не закінчилася
