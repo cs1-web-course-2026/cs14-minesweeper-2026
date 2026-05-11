@@ -66,12 +66,12 @@ function initializeField(rows, cols) {
  */
 function generateField(rows, cols, minesCount) {
   const field = initializeField(rows, cols);
-  const maxMinesCount = rows * cols;
-  const clampedMinesCount = Math.max(0, Math.min(minesCount, maxMinesCount));
+  const maxMines = rows * cols;
+  const safeMinesCount = Math.max(0, Math.min(minesCount, maxMines));
   let placedMines = 0;
 
   // Розміщуємо міни випадковим чином
-  while (placedMines < clampedMinesCount) {
+  while (placedMines < safeMinesCount) {
     const randomRow = Math.floor(Math.random() * rows);
     const randomCol = Math.floor(Math.random() * cols);
 
