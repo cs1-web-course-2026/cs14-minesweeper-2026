@@ -214,26 +214,28 @@ function openCell(row, col) {
 
 /**
  * Перевіряє, чи виконана умова перемоги
- * Гра виграна, якщо всі небезпечні клітинки відкриті
+ * Гра виграна, якщо всі безпечні клітинки відкриті
  */
 function checkWinCondition() {
-  let closedCount = 0;
-  let closedMinesCount = 0;
+  let notOpenedCount = 0;
+  let notOpenedMinesCount = 0;
 
   for (let row = 0; row < gameField.length; row++) {
     for (let col = 0; col < gameField[row].length; col++) {
       const cell = gameField[row][col];
-      if (cell.state === 'closed') {
-        closedCount++;
+
+      if (cell.state !== 'opened') {
+        notOpenedCount++;
+
         if (cell.type === 'mine') {
-          closedMinesCount++;
+          notOpenedMinesCount++;
         }
       }
     }
   }
 
-  // Гра виграна, якщо закриті тільки міни
-  if (closedCount === closedMinesCount && closedMinesCount > 0) {
+  // Гра виграна, якщо не відкриті тільки міни
+  if (notOpenedCount === notOpenedMinesCount && notOpenedMinesCount > 0) {
     gameState.status = 'win';
     stopTimer();
     revealAllMines();
