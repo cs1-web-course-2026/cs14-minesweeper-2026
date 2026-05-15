@@ -28,11 +28,22 @@
 
       <section id="board" class="board" aria-label="Ігрове поле"></section>
 
+      <p
+        id="game-message"
+        role="status"
+        aria-live="polite"
+        class="game-message"
+      ></p>
+
       <section class="legend" aria-label="Демо станів клітинок">
         <h2 class="legend-title">Стани клітинок</h2>
 
         <div class="legend-row">
-          <button type="button" aria-label="Закрита клітинка"></button>
+          <button
+            class="cell closed"
+            type="button"
+            aria-label="Закрита клітинка"
+          ></button>
           <button class="cell open n1" type="button">1</button>
           <button
             class="cell closed flag"
