@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сапер - Блюменталь Олексій</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="minesweeper-container">
+        <header class="game-header">
+            <div class="counter" id="mines-count">010</div>
+            <button class="start-btn" id="start-btn">🙂</button>
+            <div class="counter" id="timer">000</div>
+        </header>
+
+        <main class="game-board">
+            <div class="cell hidden"></div> <div class="cell revealed" 
+            data-number="1">1</div> <div class="cell revealed" 
+            data-number="2">2</div> <div class="cell 
+            hidden flag">🚩</div> <div class="cell 
+            hidden"></div> <div class="cell 
+            revealed mine">💣</div> <div class="cell 
+            hidden"></div> <div class="cell revealed 
+            mine-exploded">💥</div> <div class="cell hidden flag 
+            false-flag">❌</div> </main>
+    </div>
+</body>
+</html>
