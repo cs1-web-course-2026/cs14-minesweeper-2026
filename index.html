@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minesweeper UI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="game" aria-label="Інтерфейс гри Minesweeper">
+        <header class="game-header">
+          <div class="display" aria-label="Таймер">
+            <span class="display__label">TIME</span>
+            <span class="display__value" id="timer">00:00</span>
+          </div>
+
+          <button id="newGame" class="new-game" type="button" aria-label="Почати нову гру">
+            NEW
+          </button>
+
+          <div class="display" aria-label="Кількість прапорців">
+            <span class="display__label">FLAGS</span>
+            <span class="display__value" id="flags">010</span>
+          </div>
+        </header>
+
+        <section class="field" aria-label="Ігрове поле" id="field">
+          <!-- Поле буде згенеровано динамічно скриптом -->
+        </section>
+      </section>
+    </main>
+  </body>
+    <script src="minesweeper.js"></script>
+</html>
