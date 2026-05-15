@@ -1,21 +1,37 @@
+const GAME_STATUS = {
+  PROCESS: 'process',
+  WIN: 'win',
+  LOSE: 'lose',
+};
+
+const CELL_TYPE = {
+  EMPTY: 'empty',
+  MINE: 'mine',
+};
+
+const CELL_STATE = {
+  CLOSED: 'closed',
+  OPENED: 'opened',
+  FLAGGED: 'flagged',
+};
+
 const gameState = {
   rows: 10,
   cols: 10,
   minesCount: 15,
-  status: 'process',
+  status: GAME_STATUS.PROCESS,
   gameTime: 0,
   timerId: null,
   flagsCount: 0,
   openedCellsCount: 0,
+  field: [],
 };
-
-let field = [];
 
 function createCell() {
   return {
-    type: 'empty',
+    type: CELL_TYPE.EMPTY,
     neighborMines: 0,
-    state: 'closed',
+    state: CELL_STATE.CLOSED,
   };
 }
 
@@ -45,10 +61,14 @@ function getNeighbours(row, col) {
 }
 
 function generateField(rows, cols, minesCount) {
+  if (minesCount >= rows * cols) {
+    throw new Error('Mines count must be less than total cells count');
+  }
+
   gameState.rows = rows;
   gameState.cols = cols;
   gameState.minesCount = minesCount;
-  gameState.status = 'process';
+  gameState.status = GAME_STATUS.PROCESS;
   gameState.gameTime = 0;
   gameState.flagsCount = 0;
   gameState.openedCellsCount = 0;
@@ -73,24 +93,24 @@ function generateField(rows, cols, minesCount) {
     const randomRow = Math.floor(Math.random() * rows);
     const randomCol = Math.floor(Math.random() * cols);
 
-    if (newField[randomRow][randomCol].type !== 'mine') {
-      newField[randomRow][randomCol].type = 'mine';
+    if (newField[randomRow][randomCol].type !== CELL_TYPE.MINE) {
+      newField[randomRow][randomCol].type = CELL_TYPE.MINE;
       placedMines += 1;
     }
   }
 
-  field = newField;
+  gameState.field = newField;
   countNeighbourMines();
 
-  return field;
+  return gameState.field;
 }
 
 function countNeighbourMines() {
   for (let row = 0; row < gameState.rows; row += 1) {
     for (let col = 0; col < gameState.cols; col += 1) {
-      const cell = field[row][col];
+      const cell = gameState.field[row][col];
 
-      if (cell.type === 'mine') {
+      if (cell.type === CELL_TYPE.MINE) {
         continue;
       }
 
@@ -98,7 +118,9 @@ function countNeighbourMines() {
       let minesCount = 0;
 
       for (const [neighbourRow, neighbourCol] of neighbours) {
-        if (field[neighbourRow][neighbourCol].type === 'mine') {
+        if (
+          gameState.field[neighbourRow][neighbourCol].type === CELL_TYPE.MINE
+        ) {
           minesCount += 1;
         }
       }
@@ -114,7 +136,7 @@ function startTimer() {
   }
 
   gameState.timerId = setInterval(() => {
-    if (gameState.status === 'process') {
+    if (gameState.status === GAME_STATUS.PROCESS) {
       gameState.gameTime += 1;
     }
   }, 1000);
@@ -132,23 +154,23 @@ function openCell(row, col) {
     return;
   }
 
-  if (gameState.status !== 'process') {
+  if (gameState.status !== GAME_STATUS.PROCESS) {
     return;
   }
 
-  const cell = field[row][col];
+  const cell = gameState.field[row][col];
 
-  if (cell.state === 'opened' || cell.state === 'flagged') {
+  if (cell.state === CELL_STATE.OPENED || cell.state === CELL_STATE.FLAGGED) {
     return;
   }
 
   startTimer();
 
-  cell.state = 'opened';
+  cell.state = CELL_STATE.OPENED;
   gameState.openedCellsCount += 1;
 
-  if (cell.type === 'mine') {
-    gameState.status = 'lose';
+  if (cell.type === CELL_TYPE.MINE) {
+    gameState.status = GAME_STATUS.LOSE;
     stopTimer();
     openAllMines();
     return;
@@ -158,9 +180,12 @@ function openCell(row, col) {
     const neighbours = getNeighbours(row, col);
 
     for (const [neighbourRow, neighbourCol] of neighbours) {
-      const neighbourCell = field[neighbourRow][neighbourCol];
+      const neighbourCell = gameState.field[neighbourRow][neighbourCol];
 
-      if (neighbourCell.state === 'closed' && neighbourCell.type === 'empty') {
+      if (
+        neighbourCell.state === CELL_STATE.CLOSED &&
+        neighbourCell.type === CELL_TYPE.EMPTY
+      ) {
         openCell(neighbourRow, neighbourCol);
       }
     }
@@ -174,24 +199,24 @@ function toggleFlag(row, col) {
     return;
   }
 
-  if (gameState.status !== 'process') {
+  if (gameState.status !== GAME_STATUS.PROCESS) {
     return;
   }
 
-  const cell = field[row][col];
+  const cell = gameState.field[row][col];
 
-  if (cell.state === 'opened') {
+  if (cell.state === CELL_STATE.OPENED) {
     return;
   }
 
-  if (cell.state === 'closed') {
-    cell.state = 'flagged';
+  if (cell.state === CELL_STATE.CLOSED) {
+    cell.state = CELL_STATE.FLAGGED;
     gameState.flagsCount += 1;
     return;
   }
 
-  if (cell.state === 'flagged') {
-    cell.state = 'closed';
+  if (cell.state === CELL_STATE.FLAGGED) {
+    cell.state = CELL_STATE.CLOSED;
     gameState.flagsCount -= 1;
   }
 }
@@ -199,8 +224,8 @@ function toggleFlag(row, col) {
 function openAllMines() {
   for (let row = 0; row < gameState.rows; row += 1) {
     for (let col = 0; col < gameState.cols; col += 1) {
-      if (field[row][col].type === 'mine') {
-        field[row][col].state = 'opened';
+      if (gameState.field[row][col].type === CELL_TYPE.MINE) {
+        gameState.field[row][col].state = CELL_STATE.OPENED;
       }
     }
   }
@@ -210,7 +235,7 @@ function checkWin() {
   const safeCellsCount = gameState.rows * gameState.cols - gameState.minesCount;
 
   if (gameState.openedCellsCount === safeCellsCount) {
-    gameState.status = 'win';
+    gameState.status = GAME_STATUS.WIN;
     stopTimer();
   }
 }
@@ -224,19 +249,19 @@ function restartGame(
 }
 
 function printField(showMines = false) {
-  const result = field
+  const result = gameState.field
     .map((row) =>
       row
         .map((cell) => {
-          if (cell.state === 'flagged') {
+          if (cell.state === CELL_STATE.FLAGGED) {
             return 'F';
           }
 
-          if (cell.state === 'closed' && !showMines) {
+          if (cell.state === CELL_STATE.CLOSED && !showMines) {
             return 'C';
           }
 
-          if (cell.type === 'mine') {
+          if (cell.type === CELL_TYPE.MINE) {
             return 'M';
           }
 
@@ -248,8 +273,3 @@ function printField(showMines = false) {
 
   console.log(result);
 }
-
-generateField(10, 10, 15);
-console.log('Гру створено. Стан гри:', gameState);
-printField(true);
-іі;
