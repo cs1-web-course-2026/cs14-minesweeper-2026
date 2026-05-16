@@ -1,125 +1,69 @@
+* { box-sizing: border-box; }
+
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background-color: #f0f0f0;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; margin: 0; background-color: #008080;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .minesweeper-container {
-    background-color: #bdbdbd;
-    padding: 10px;
-    border: 3px solid;
-    border-top-color: #ffffff;
-    border-left-color: #ffffff;
-    border-bottom-color: #7b7b7b;
-    border-right-color: #7b7b7b;
+    background-color: #bdbdbd; padding: 10px;
+    border: 3px solid; border-color: #ffffff #7b7b7b #7b7b7b #ffffff;
     display: inline-block;
 }
 
-/* Хедер гри: таймер, лічильник, кнопка */
 .game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #bdbdbd;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 2px solid;
-    border-top-color: #7b7b7b;
-    border-left-color: #7b7b7b;
-    border-bottom-color: #ffffff;
-    border-right-color: #ffffff;
+    display: flex; justify-content: space-between; align-items: center;
+    background-color: #bdbdbd; padding: 10px; margin-bottom: 10px;
+    border: 2px solid; border-color: #7b7b7b #ffffff #ffffff #7b7b7b;
 }
 
 .counter {
-    background-color: black;
-    color: red;
+    background-color: black; color: red;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 24px;
-    padding: 2px 5px;
-    border: 1px solid #7b7b7b;
-    min-width: 50px;
-    text-align: center;
+    font-size: 24px; padding: 2px 5px; border: 1px solid #7b7b7b;
+    min-width: 55px; text-align: center;
 }
 
 .start-btn {
-    font-size: 24px;
-    cursor: pointer;
-    padding: 2px 5px;
-    background-color: #bdbdbd;
-    border: 2px solid;
-    border-top-color: #ffffff;
-    border-left-color: #ffffff;
-    border-bottom-color: #7b7b7b;
-    border-right-color: #7b7b7b;
+    font-size: 24px; cursor: pointer; width: 40px; height: 40px;
+    background-color: #bdbdbd; border: 2px solid;
+    border-color: #ffffff #7b7b7b #7b7b7b #ffffff;
+    display: flex; justify-content: center; align-items: center;
 }
 
-.start-btn:active {
-    border-top-color: #7b7b7b;
-    border-left-color: #7b7b7b;
-    border-bottom-color: #ffffff;
-    border-right-color: #ffffff;
-}
+.start-btn:active { border-color: #7b7b7b #ffffff #ffffff #7b7b7b; }
 
-/* Ігрове поле */
 .game-board {
     display: grid;
-    grid-template-columns: repeat(3, 30px); /* Сітка 3x3 клітинки */
-    grid-template-rows: repeat(3, 30px);
-    gap: 0;
-    background-color: #7b7b7b;
-    border: 2px solid;
-    border-top-color: #7b7b7b;
-    border-left-color: #7b7b7b;
-    border-bottom-color: #ffffff;
-    border-right-color: #ffffff;
+    grid-template-columns: repeat(10, 30px); /* Сітка 10x10 */
+    grid-template-rows: repeat(10, 30px);
+    border: 3px solid; border-color: #7b7b7b #ffffff #ffffff #7b7b7b;
 }
 
-/* Опис станів клітинок */
 .cell {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 16px;
-    box-sizing: border-box;
-    cursor: pointer;
-    user-select: none;
+    width: 30px; height: 30px; display: flex;
+    justify-content: center; align-items: center;
+    font-weight: bold; font-size: 16px; cursor: pointer; user-select: none;
+    background-color: #bdbdbd; border: 2px solid;
+    border-color: #ffffff #7b7b7b #7b7b7b #ffffff;
 }
 
-/* Закрита клітинка */
-.cell.hidden {
-    background-color: #bdbdbd;
-    border: 2px solid;
-    border-top-color: #ffffff;
-    border-left-color: #ffffff;
-    border-bottom-color: #7b7b7b;
-    border-right-color: #7b7b7b;
-}
-
-/* Відкрита клітинка */
 .cell.revealed {
-    background-color: #e0e0e0;
-    border: 1px solid #999;
+    background-color: #e0e0e0; border: 1px solid #999;
+}
+
+.cell.mine-exploded {
+    background-color: red; border: 1px solid #999;
 }
 
 /* Кольори цифр */
-.cell[data-number="1"] { color: blue; }
-.cell[data-number="2"] { color: green; }
-
-/* Клітинка з міною */
-.cell.mine {
-    background-color: #e0e0e0;
-    border: 1px solid #999;
-}
-
-/* Міна, на яку натиснув користувач */
-.cell.mine-exploded {
-    background-color: red;
-    border: 1px solid #999;
-}
+.val-1 { color: blue; }
+.val-2 { color: green; }
+.val-3 { color: red; }
+.val-4 { color: darkblue; }
+.val-5 { color: darkred; }
+.val-6 { color: teal; }
+.val-7 { color: black; }
+.val-8 { color: gray; }
+/* Кінець */

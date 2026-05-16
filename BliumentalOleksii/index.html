@@ -9,21 +9,15 @@
 <body>
     <div class="minesweeper-container">
         <header class="game-header">
-            <div class="counter" id="mines-count">010</div>
+            <div class="counter" id="flags-count">015</div>
             <button class="start-btn" id="start-btn">🙂</button>
             <div class="counter" id="timer">000</div>
         </header>
 
-        <main class="game-board">
-            <div class="cell hidden"></div> <div class="cell revealed" 
-            data-number="1">1</div> <div class="cell revealed" 
-            data-number="2">2</div> <div class="cell 
-            hidden flag">🚩</div> <div class="cell 
-            hidden"></div> <div class="cell 
-            revealed mine">💣</div> <div class="cell 
-            hidden"></div> <div class="cell revealed 
-            mine-exploded">💥</div> <div class="cell hidden flag 
-            false-flag">❌</div> </main>
+        <main class="game-board" id="game-board"></main>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
+/* Кінець */
