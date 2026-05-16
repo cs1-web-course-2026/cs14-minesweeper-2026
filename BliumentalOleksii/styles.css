@@ -1,0 +1,69 @@
+* { box-sizing: border-box; }
+
+body {
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; margin: 0; background-color: #008080;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.minesweeper-container {
+    background-color: #bdbdbd; padding: 10px;
+    border: 3px solid; border-color: #ffffff #7b7b7b #7b7b7b #ffffff;
+    display: inline-block;
+}
+
+.game-header {
+    display: flex; justify-content: space-between; align-items: center;
+    background-color: #bdbdbd; padding: 10px; margin-bottom: 10px;
+    border: 2px solid; border-color: #7b7b7b #ffffff #ffffff #7b7b7b;
+}
+
+.counter {
+    background-color: black; color: red;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px; padding: 2px 5px; border: 1px solid #7b7b7b;
+    min-width: 55px; text-align: center;
+}
+
+.start-btn {
+    font-size: 24px; cursor: pointer; width: 40px; height: 40px;
+    background-color: #bdbdbd; border: 2px solid;
+    border-color: #ffffff #7b7b7b #7b7b7b #ffffff;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.start-btn:active { border-color: #7b7b7b #ffffff #ffffff #7b7b7b; }
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 30px); /* Сітка 10x10 */
+    grid-template-rows: repeat(10, 30px);
+    border: 3px solid; border-color: #7b7b7b #ffffff #ffffff #7b7b7b;
+}
+
+.cell {
+    width: 30px; height: 30px; display: flex;
+    justify-content: center; align-items: center;
+    font-weight: bold; font-size: 16px; cursor: pointer; user-select: none;
+    background-color: #bdbdbd; border: 2px solid;
+    border-color: #ffffff #7b7b7b #7b7b7b #ffffff;
+}
+
+.cell.revealed {
+    background-color: #e0e0e0; border: 1px solid #999;
+}
+
+.cell.mine-exploded {
+    background-color: red; border: 1px solid #999;
+}
+
+/* Кольори цифр */
+.val-1 { color: blue; }
+.val-2 { color: green; }
+.val-3 { color: red; }
+.val-4 { color: darkblue; }
+.val-5 { color: darkred; }
+.val-6 { color: teal; }
+.val-7 { color: black; }
+.val-8 { color: gray; }
+/* Кінець */
